@@ -1,0 +1,4 @@
+interface:
+  display_name: "Проверка backend-архитектуры"
+  short_description: "Проверить архитектуру и компромиссы"
+  default_prompt: "Use $review-backend-architecture to review this system design and identify the highest-priority risks."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Русский Conventional Commit"
+  short_description: "Подготовить Conventional Commit на русском"
+  default_prompt: "Use $prepare-russian-commit to inspect the current diff and prepare a Russian Conventional Commit."

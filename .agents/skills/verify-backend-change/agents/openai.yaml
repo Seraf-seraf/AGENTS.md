@@ -1,0 +1,4 @@
+interface:
+  display_name: "Проверка backend-изменения"
+  short_description: "Проверить логику, БД и GraphQL"
+  default_prompt: "Use $verify-backend-change to verify this backend change with focused tests and a manual GraphQL check."

@@ -1,0 +1,51 @@
+# Narrow read-only commands that may run outside the sandbox without approval.
+# Commands that execute project code, access Docker, change Git state, or use the
+# network are intentionally absent.
+
+prefix_rule(
+    pattern = ["rg", "--files"],
+    decision = "allow",
+    justification = "List workspace files without enabling ripgrep preprocessors",
+    match = [
+        "rg --files",
+        "rg --files src",
+    ],
+    not_match = [
+        "rg TODO",
+        "rg --pre tool TODO",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", ["status", "diff", "log", "show", "rev-parse", "ls-files"]],
+    decision = "allow",
+    justification = "Allow common Git inspection commands; mutating Git subcommands are excluded",
+    match = [
+        "git status --short",
+        "git diff --stat",
+        "git log -n 10 --oneline",
+        "git show --stat HEAD",
+        "git rev-parse --show-toplevel",
+        "git ls-files",
+    ],
+    not_match = [
+        "git add .",
+        "git commit -m test",
+        "git push origin main",
+        "git reset --hard HEAD",
+        "git clean -fd",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "branch", "--show-current"],
+    decision = "allow",
+    justification = "Show the current branch without allowing other git branch operations",
+    match = [
+        "git branch --show-current",
+    ],
+    not_match = [
+        "git branch -D feature/test",
+        "git branch --move old new",
+    ],
+)

@@ -1,0 +1,42 @@
+# Template for the user-level ~/.codex/config.toml.
+# Project-local config is applied only when the repository is trusted.
+
+model = "gpt-5.6-sol"
+model_reasoning_effort = "low"
+plan_mode_reasoning_effort = "medium"
+review_model = "gpt-5.6-terra"
+service_tier = "default"
+
+approval_policy = "on-request"
+approvals_reviewer = "user"
+sandbox_mode = "workspace-write"
+
+web_search = "live"
+personality = "pragmatic"
+
+# GPT-5.6 long-context API pricing starts above 272K input tokens.
+# A 240K total-context trigger leaves headroom, but it is not a billing gate.
+model_auto_compact_token_limit = 240000
+model_auto_compact_token_limit_scope = "total"
+
+[sandbox_workspace_write]
+network_access = true
+
+[agents]
+enabled = true
+default_subagent_model = "gpt-5.6-terra"
+default_subagent_reasoning_effort = "low"
+max_concurrent_threads_per_session = 2
+
+# These entries enable installed plugins; they do not install missing bundles.
+[plugins."github@openai-curated-remote"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."figma@openai-curated-remote"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = false
