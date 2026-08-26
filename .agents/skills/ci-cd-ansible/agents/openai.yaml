@@ -1,0 +1,4 @@
+interface:
+  display_name: "CI/CD и Ansible"
+  short_description: "Проверить CI/CD, deployment и Ansible"
+  default_prompt: "Use $ci-cd-ansible for this CI/CD, deployment, release, rollback, or Ansible task."
