@@ -5,6 +5,13 @@ description: Apply strict CI/CD and Ansible engineering rules for tasks involvin
 
 # CI/CD и Ansible
 
+## До изменения
+
+* Зафиксировать pipeline contract: поддерживаемые trigger sources, ветки и environments; обязательные inputs; outputs и artifacts; требуемые runner capabilities; порядок gates; владельца каждого health-инварианта.
+* Для каждого trigger source явно определить поведение: merge request, push, web/manual, API, schedule, parent/child pipeline и tag. Не считать, что правило для одного source автоматически покрывает остальные.
+* Для внешнего input задать единственный контракт передачи, precedence между argument/job input/environment и проверку пустого или некорректного значения до начала мутаций.
+* Отделить подтверждённые требования целевой среды от предположений о working directory, filesystem, symlink, сети, caches, credentials и установленных runtime tools.
+
 ## Организация CI
 
 * Корневой CI-файл должен содержать только `workflow`, глобальные переменные и подключение pipeline-файлов. Объявлять в нём jobs запрещено.
@@ -13,6 +20,7 @@ description: Apply strict CI/CD and Ansible engineering rules for tasks involvin
 * Привязка CI-компонентов к конкретному сервису должна содержать только параметры этого сервиса. Копировать реализацию job между сервисами запрещено.
 * CI-компонент выносится в общий шаблон только при наличии не менее двух потребителей с одинаковым контрактом. Не создавать универсальные шаблоны заранее.
 * Разные способы сборки, доставки, запуска или rollback должны оформляться отдельными pipeline flow. Переключение принципиально разных механизмов через переменную `mode` запрещено.
+* Изменение `rules` или `workflow` проверять таблицей trigger source × branch/tag × requested action. Проверка только push pipeline недостаточна.
 
 ## Содержимое jobs
 
@@ -21,13 +29,19 @@ description: Apply strict CI/CD and Ansible engineering rules for tasks involvin
 * Один скрипт должен выполнять одну законченную операцию: подготовку окружения, тестирование, сборку release, доставку, deploy или rollback.
 * Скрипты должны быть совместимы с POSIX `sh`, начинаться с `set -eu`, заключать expansion переменных в кавычки и проверять обязательные входы через `${VAR:?}`.
 * Скрипты не должны читать неявные значения из локального окружения. Все внешние входы должны передаваться явно через аргументы или документированные переменные окружения.
+* Пути, передаваемые между jobs, процессами, containers или hosts, должны иметь явный root и согласованную absolute/relative semantics. Не полагаться на текущую директорию получателя.
 * Секреты запрещено печатать в stdout, включать в команды диагностики или сохранять в artifacts.
+* Файлы с секретами и runtime config считать непрозрачными artifacts: controller проверяет наличие, тип, размер и permissions, но не шаблонизирует и не разбирает содержимое. Семантику файла валидирует его producer или consuming process на доверенной границе.
+* Если диагностика касается secret-bearing input, отделить скрытое чтение от сообщения об ошибке. Наружу выводить только безопасные counts, booleans, names, origins или hashes, по которым нельзя восстановить значение.
 
 ## Runners и тесты
 
 * Runner выбирается по требуемой capability, а не по названию stage.
+* Сначала классифицировать suites по фактическим зависимостям: pure unit, contract, integration, database/container, deployment smoke, end-to-end. Каждая обязательная suite должна запускаться ровно один раз на минимально достаточном runner.
 * Release разрешено создавать только после успешного завершения всех обязательных групп тестов.
 * Одинаковые тесты не должны повторно запускаться в нескольких jobs без отдельной обоснованной цели.
+* Медленный или слабый runner не является основанием молча убрать обязательный gate из `needs`. Сначала устранить дублирование, разделить suites, ограничить parallelism или исправить capacity; временное исключение должно иметь owner, срок и компенсирующую проверку.
+* Runner с повышенными capabilities, Docker socket, privileged mode или production credentials не использовать для jobs, которым эти возможности не нужны.
 
 ## Release, deploy и rollback
 
@@ -35,10 +49,15 @@ description: Apply strict CI/CD and Ansible engineering rules for tasks involvin
 * Deploy должен использовать точно тот artifact, который прошёл проверки. Повторная сборка во время deploy запрещена.
 * На целевом сервере запрещены checkout исходного кода, установка зависимостей и сборка приложения.
 * Artifact должен сопровождаться checksum и идентификатором версии.
+* До доставки проверить production dependency closure, фактический entrypoint и обязательные внешние assets. Для offline-среды наличие model/data/cache artifacts является частью release contract, а не случайной предпосылкой runtime.
 * Deploy и rollback должны быть разными jobs и разными playbooks.
 * Общий механизм проверки, распаковки, активации, health-check и retention должен переиспользоваться, а не копироваться между deploy и rollback.
 * Rollback должен активировать уже существующий release. Он не должен обновлять секреты, устанавливать зависимости или автоматически выполнять обратные миграции.
 * Мутации одного окружения должны сериализоваться. Одновременный deploy и rollback одного окружения запрещены.
+* Отличать liveness, readiness и functional smoke. У каждого инварианта должен быть один authoritative owner; повтор одной и той же проверки на соседних слоях запрещён, если он не обнаруживает иной класс отказа.
+* Readiness проверяет точное желаемое состояние через структурированный источник: ожидаемый набор процессов/instances, их terminal status и доступность обязательных зависимостей. PID, существующий файл или открытый port сами по себе не доказывают готовность.
+* Polling должен иметь явный интервал и конечный timeout. Проверять delayed start, crash loop, stale process, missing process и partial activation.
+* Недоступность prerequisite — сети, registry, model cache, package mirror или external service — классифицировать отдельно от дефекта application artifact. Preflight должен завершаться до активации, когда prerequisite можно проверить заранее.
 
 ## Организация Ansible
 
@@ -53,6 +72,8 @@ description: Apply strict CI/CD and Ansible engineering rules for tasks involvin
 * Секреты должны поступать только из защищённого хранилища или protected CI variables. Хранить секреты в роли, playbook или inventory запрещено.
 * Каждая изменяющая состояние операция должна выполняться только после проверки всех необходимых входов и prerequisites.
 * Переключение активного release должно быть атомарным. При ошибке предыдущая рабочая версия должна оставаться активной.
+* Для filesystem-проверок явно определить ожидаемый object type: regular file, directory, symlink или target. Указывать `follow` осознанно и отдельно проверять broken link, неправильный target и permissions, когда они значимы.
+* Перед копированием повторяющегося task pattern проверить один canonical instance parser-ом, lint и syntax check. Не размножать непроверенную YAML-структуру.
 
 ## Стиль Ansible-кода
 
@@ -68,7 +89,10 @@ description: Apply strict CI/CD and Ansible engineering rules for tasks involvin
 
 ## Проверка изменений
 
-* Изменение CI-контракта должно сопровождаться обновлением его входов, outputs и зависимых jobs.
-* Изменение deployment lifecycle должно проверять как успешный сценарий, так и отказ до активации.
-* Перед merge для затронутых файлов должны проходить `yamllint`, `ansible-lint` и `shellcheck`.
+* Изменение CI-контракта должно сопровождаться обновлением его inputs, outputs, trigger matrix и зависимых jobs.
+* Изменение test topology должно подтверждать, что обязательные suites не потерялись, не дублируются и назначены runner с требуемой capability.
+* Изменение deployment lifecycle должно проверять успешный сценарий, отказ до активации, отказ после частичной активации и сохранение или восстановление предыдущего рабочего release.
+* Для readiness проверять delayed start, crash loop, stale state, лишний и отсутствующий process, timeout и недоступный dependency.
+* Для CI YAML выполнить доступный platform lint или dry-run; для YAML и Ansible — parser, `yamllint`, `ansible-lint` и `ansible-playbook --syntax-check`; для shell — `shellcheck` и, когда применимо, запуск с минимальными test inputs.
+* Проверять не только отдельные файлы, но и итоговый rendered/expanded contract: merged CI config, inventory+defaults, Compose config или generated artifact metadata.
 * Запрещено отключать lint-правило без комментария, объясняющего техническую причину и область исключения.
