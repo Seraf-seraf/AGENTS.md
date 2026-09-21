@@ -1,4 +1,4 @@
 interface:
   display_name: "Проверка backend-архитектуры"
-  short_description: "Проверить архитектуру и компромиссы"
-  default_prompt: "Use $review-backend-architecture to review this system design and identify the highest-priority risks."
+  short_description: "Ревью границ без недоказанных замечаний"
+  default_prompt: "Используй $review-backend-architecture для ревью только запрошенных границ и зависимостей. Учитывай принятые исключения. Выдай без дублей подтверждённые ошибки: место, правило, доказательство и минимальное исправление. Не меняй код; отсутствие замечаний допустимо."
