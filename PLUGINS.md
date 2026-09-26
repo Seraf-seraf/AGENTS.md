@@ -1,6 +1,6 @@
 # Skills и plugins
 
-Актуальность рекомендаций: 7 августа 2026 года.
+Актуальность рекомендаций: 26 сентября 2026 года.
 
 ## Baseline
 
@@ -10,7 +10,7 @@
 | Browser plugin | включить | Проверка изменённого frontend и локальных web-сценариев | Низкие в простое; высокие при длинном цикле snapshots |
 | Figma plugin | включить | Design-to-code и редкие frontend-задачи | Метаданные нескольких skills; основные расходы только при вызове |
 | OpenAI Docs skill | использовать встроенный | Актуальные настройки Codex и API | Поиск и чтение документации только при срабатывании |
-| Личные standalone skills | установить | Архитектура, backend-проверка и русские commits | Три коротких описания в постоянном контексте; body загружается по необходимости |
+| Личный skills-only plugin | установить | Архитектура, backend-проверка, CI/CD и Ansible, русские commits | Четыре коротких описания skills; body загружается по необходимости |
 | Computer Use plugin | выключить | Управление Windows-приложениями | Может создавать длинные визуальные циклы; Browser обычно достаточно |
 
 В `.codex/config.toml` зафиксировано включение уже установленных GitHub, Browser и Figma и отключение Computer Use. Запись `enabled = true` не устанавливает отсутствующий plugin.
@@ -40,12 +40,15 @@
 
 Plugins устанавливаются через каталог Codex в desktop app или через `/plugins` в интерактивном Codex CLI. После установки нужно начать новую сессию. Конфигурация в этом репозитории управляет только состоянием уже установленного plugin; она не заменяет установку и OAuth.
 
-## Личные skills
+## Личный skills-only plugin
 
-Репозиторий содержит в `.agents/skills/`:
+Каталог `.agents/` является корнем portable plugin: `.agents/plugin.json` задаёт identity, а `.agents/skills/` содержит workflows. MCP этому plugin не нужен.
+
+В пакет входят:
 
 - `review-backend-architecture` — архитектурный review и проектирование;
 - `verify-backend-change` — релевантные тесты, локальные данные и ручной GraphQL-запрос;
-- `prepare-russian-commit` — Conventional Commit на русском без автоматического push.
+- `prepare-russian-commit` — Conventional Commit на русском без автоматического push;
+- `ci-cd-ansible` — CI/CD, deployment, release, rollback и Ansible.
 
-Это standalone skills, а не личный plugin. Пока workflows меняются, такой формат проще и дешевле поддерживать. Когда набор стабилизируется и понадобится установка одним пакетом или распространение команде, его можно упаковать в skills-only plugin.
+Для загрузки в ChatGPT нужно архивировать содержимое `.agents/`, а не сам каталог: в корне `.zip`, `.tar.gz` или `.tgz` должны находиться `plugin.json` и `skills/`. Те же skills остаются пригодны для standalone-установки в `~/.agents/skills`.

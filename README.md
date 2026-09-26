@@ -7,7 +7,8 @@
 - `AGENTS.md` — глобальные инженерные предпочтения.
 - `.codex/config.toml` — шаблон пользовательского `~/.codex/config.toml`.
 - `.codex/rules/allowlist.rules` — разрешения только для поиска и чтения состояния Git.
-- `.agents/skills/` — личные workflows с progressive disclosure, включая специализированный `ci-cd-ansible`.
+- `.agents/plugin.json` — portable manifest личного skills-only plugin.
+- `.agents/skills/` — skills этого plugin и одновременно standalone workflows для Codex, включая специализированный `ci-cd-ansible`.
 - `PLUGINS.md` — конкретный baseline и условные plugins.
 
 Глобальный `AGENTS.md` содержит устойчивые общие инженерные правила и короткие указатели. Подробные правила CI/CD и Ansible вынесены в `.agents/skills/ci-cd-ansible/SKILL.md`: они загружаются только для задач про CI/CD, GitLab CI, deployment, release, rollback, Ansible, playbooks, roles и связанную инфраструктуру. Это уменьшает постоянный контекст без потери строгости специализированного процесса.
@@ -31,6 +32,26 @@ cp -R .agents/skills/. ~/.agents/skills/
 ```
 
 Команды перезаписывают одноимённые файлы, поэтому сначала сравните их с уже установленной конфигурацией. После изменения rules перезапустите Codex. Для локальных skills в отдельном проекте оставьте их в `<project>/.agents/skills`; Codex обнаружит их без глобального копирования.
+
+### Установка как ChatGPT/Codex plugin
+
+Каталог `.agents/` одновременно является корнем portable skills-only plugin: в нём находятся `plugin.json` и `skills/`. Для загрузки через окно «Новый плагин» архивируйте именно содержимое `.agents/`, чтобы `plugin.json` и `skills/` лежали в корне архива.
+
+PowerShell из корня репозитория:
+
+```powershell
+Push-Location .agents
+Compress-Archive -Path plugin.json,skills -DestinationPath ..\seraf-backend-engineering.zip -Force
+Pop-Location
+```
+
+Ожидаемая структура архива:
+
+```text
+seraf-backend-engineering.zip
+├── plugin.json
+└── skills/
+```
 
 ## Почему выбран такой config
 
