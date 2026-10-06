@@ -1,10 +1,8 @@
 # Template for the user-level ~/.codex/config.toml.
 # Project-local config is applied only when the repository is trusted.
 
-model = "gpt-5.6-sol"
-model_reasoning_effort = "low"
-plan_mode_reasoning_effort = "medium"
-review_model = "gpt-5.6-terra"
+model = "gpt-6-luna"
+review_model = "gpt-6-luna"
 service_tier = "default"
 
 approval_policy = "on-request"
@@ -14,8 +12,7 @@ sandbox_mode = "workspace-write"
 web_search = "live"
 personality = "pragmatic"
 
-# GPT-5.6 long-context API pricing starts above 272K input tokens.
-# A 240K total-context trigger leaves headroom, but it is not a billing gate.
+# Keep a conservative compaction trigger; GPT-6 Luna supports a much larger context window.
 model_auto_compact_token_limit = 240000
 model_auto_compact_token_limit_scope = "total"
 
@@ -24,8 +21,7 @@ network_access = true
 
 [agents]
 enabled = true
-default_subagent_model = "gpt-5.6-terra"
-default_subagent_reasoning_effort = "low"
+default_subagent_model = "gpt-6-luna"
 max_concurrent_threads_per_session = 2
 
 # These entries enable installed plugins; they do not install missing bundles.
