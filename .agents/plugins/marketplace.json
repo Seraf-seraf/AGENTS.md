@@ -1,0 +1,20 @@
+{
+  "name": "seraf-backend-engineering",
+  "interface": {
+    "displayName": "Seraf Backend Engineering"
+  },
+  "plugins": [
+    {
+      "name": "seraf-backend-engineering",
+      "source": {
+        "source": "local",
+        "path": "./.agents"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
