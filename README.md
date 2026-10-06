@@ -8,12 +8,15 @@
 - `.codex/config.toml` — шаблон пользовательского `~/.codex/config.toml`.
 - `.codex/rules/allowlist.rules` — разрешения только для поиска и чтения состояния Git.
 - `.agents/plugin.json` — portable manifest личного skills-only plugin.
+- `.agents/plugins/marketplace.json` — repo marketplace для установки plugin напрямую из этого репозитория.
 - `.agents/skills/` — skills этого plugin и одновременно standalone workflows для Codex, включая специализированный `ci-cd-ansible`.
 - `PLUGINS.md` — конкретный baseline и условные plugins.
 
 Глобальный `AGENTS.md` содержит устойчивые общие инженерные правила и короткие указатели. Подробные правила CI/CD и Ansible вынесены в `.agents/skills/ci-cd-ansible/SKILL.md`: они загружаются только для задач про CI/CD, GitLab CI, deployment, release, rollback, Ansible, playbooks, roles и связанную инфраструктуру. Это уменьшает постоянный контекст без потери строгости специализированного процесса.
 
 Для длинной многоэтапной работы или задачи с высокой вероятностью compaction Codex должен создать временный `.codex-task-state.md` в корне workspace. В нём хранятся только цель, acceptance criteria, подтверждённые этапы и решения, изменённые файлы, результаты проверок, blocker и следующий шаг. После compaction state-файл помогает восстановить рабочее состояние, проверить `git status` и релевантный diff и продолжить без повторного исследования завершённых этапов. Для каждой обычной короткой задачи этот файл создавать не следует; после завершения его нужно удалить и не коммитить.
+
+Для многоэтапных задач `AGENTS.md` разделяет контекст и разрешённый scope: общий roadmap не даёт разрешение автоматически выполнять следующие шаги. Каждый пункт явного плана должен иметь отдельную цель, разрешённые действия, исключения и проверяемый stop criterion. После достижения критерия текущего шага агент останавливается, если пользователь не поручил выполнять следующие этапы или весь план.
 
 Codex читает глобальный `~/.codex/AGENTS.md` во всех проектах, а более близкие к рабочей директории `AGENTS.md` дополняют или переопределяют его. Проектный `.codex/config.toml` и правила работают только для доверенного репозитория. Это соответствует [официальному описанию AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [config.toml](https://learn.chatgpt.com/docs/config-file/config-reference) и [rules](https://learn.chatgpt.com/docs/agent-configuration/rules).
 
@@ -35,7 +38,21 @@ cp -R .agents/skills/. ~/.agents/skills/
 
 ### Установка как ChatGPT/Codex plugin
 
-Каталог `.agents/` одновременно является корнем portable skills-only plugin: в нём находятся `plugin.json` и `skills/`. Для загрузки через окно «Новый плагин» архивируйте именно содержимое `.agents/`, чтобы `plugin.json` и `skills/` лежали в корне архива.
+Каталог `.agents/` является корнем portable skills-only plugin, а `.agents/plugins/marketplace.json` публикует его как repo marketplace.
+
+Добавить marketplace из репозитория:
+
+```bash
+codex plugin marketplace add Seraf-seraf/AGENTS.md --ref main
+```
+
+Проверить подключённые marketplaces:
+
+```bash
+codex plugin marketplace list
+```
+
+После добавления marketplace установите `seraf-backend-engineering` через каталог plugins Codex. Если repo marketplace недоступен в используемом клиенте, остаётся portable-вариант: архивировать содержимое `.agents/`, чтобы `plugin.json` и `skills/` лежали в корне архива.
 
 PowerShell из корня репозитория:
 
@@ -55,14 +72,14 @@ seraf-backend-engineering.zip
 
 ## Почему выбран такой config
 
-- `gpt-5.6-sol` + `low` — сильная основная модель с ограниченным расходом reasoning tokens; для явно сложной архитектурной работы effort можно временно повысить.
-- `gpt-5.6-terra` — более экономная модель для `/review` и явно запрошенных subagents.
+- `gpt-6-luna` используется как основной исполнитель, модель для `/review` и default model для subagents, чтобы поведение между реализацией и ревью было предсказуемым.
+- Reasoning effort намеренно не фиксируется в `config.toml`: уровень выбирается под конкретную задачу или сессию.
 - `approvals_reviewer = "user"` — исключает отдельный reviewer-subagent на каждое eligible approval.
 - `workspace-write` + сеть — позволяет обычную разработку и сверку документации, сохраняя границу workspace.
 - не более двух subagents — ограничивает параллельный расход; `AGENTS.md` требует по умолчанию работать одним агентом.
-- compaction при `240000` и scope `total` — оставляет примерно 32K токенов запаса до порога 272K, выше которого для GPT-5.6 API действует long-context цена. [Страница модели](https://developers.openai.com/api/docs/models/gpt-5.6-sol) указывает 2× input и 1.5× output для всего запроса свыше 272K input tokens.
+- compaction при `240000` и scope `total` оставлен как консервативный порог для длинных сессий. Это operational limit для управления контекстом, а не финансовый или модельный hard limit.
 
-Codex не предоставляет отдельного approval-механизма, привязанного к переходу через ценовой порог. `model_auto_compact_token_limit` запускает compaction истории, но не является финансовым лимитом и не гарантирует верхнюю границу счёта: системный prefix, результаты инструментов и отдельные запросы также занимают контекст. Если используется подписочный Codex, списание лимитов может отличаться от API-тарификации.
+`model_auto_compact_token_limit` запускает compaction истории, но не гарантирует верхнюю границу размера отдельного запроса или расходов: системный prefix, результаты инструментов и другие части контекста также занимают место.
 
 ## Skills и plugins
 
