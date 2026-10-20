@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "seraf-backend-engineering",
-  "version": "0.1.1",
-  "description": "Backend architecture review, change verification, CI/CD and Ansible workflows, and Russian Conventional Commits.",
+  "name": "backend-engineering",
+  "version": "0.2.1",
+  "description": "Backend architecture review, behavior verification, CI/CD and infrastructure execution, and Russian Conventional Commits.",
   "author": {
     "name": "Seraf"
   },

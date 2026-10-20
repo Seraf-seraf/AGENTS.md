@@ -1,4 +1,4 @@
 interface:
-  display_name: "CI/CD и Ansible"
-  short_description: "Проверить CI/CD, deployment и Ansible"
-  default_prompt: "Use $ci-cd-ansible for this CI/CD, deployment, release, rollback, or Ansible task."
+  display_name: "CI/CD и инфраструктура"
+  short_description: "Контракты исполнения, поставка и восстановление"
+  default_prompt: "Используй $ci-cd-ansible для текущей задачи по CI/CD, поставке или инфраструктуре; правила Ansible подключай только при его использовании."

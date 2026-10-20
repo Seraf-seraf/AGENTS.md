@@ -1,11 +1,11 @@
 {
-  "name": "seraf-backend-engineering",
+  "name": "backend-engineering",
   "interface": {
-    "displayName": "Seraf Backend Engineering"
+    "displayName": "Backend Engineering"
   },
   "plugins": [
     {
-      "name": "seraf-backend-engineering",
+      "name": "backend-engineering",
       "source": {
         "source": "local",
         "path": "./.agents"

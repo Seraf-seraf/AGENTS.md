@@ -5,6 +5,8 @@ description: Prepare or create a Conventional Commit with a concise Russian desc
 
 # Prepare Russian Commit
 
+Соблюдать действующие общие и проектные инструкции.
+
 Подготавливать коммит только по явному запросу пользователя.
 
 ## Изучить изменения
@@ -48,7 +50,7 @@ type(scope): краткое действие на русском
 feat(payments): добавить идемпотентную обработку
 fix(api): сохранить conflict error при повторном запросе
 refactor(worker): централизовать проверку доступа без смены поведения
-ci(tests): назначить integration suite runner с Docker
+ci(tests): сохранить обязательные проверки перед выпуском
 ```
 
 ## Создать коммит

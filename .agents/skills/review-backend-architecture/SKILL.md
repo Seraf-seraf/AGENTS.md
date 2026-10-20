@@ -1,9 +1,11 @@
 ---
 name: review-backend-architecture
-description: Review backend component boundaries, imports, contracts, coupling, and refactoring plans within the user-requested scope. Report only evidence-backed defects with minimal fixes. Use for backend architecture reviews, module or service boundaries, and AI/MCP integrations; design alternatives only when requested. A review does not authorize implementation.
+description: Review backend component boundaries, imports, contracts, coupling, and refactoring plans within the user-requested scope. Report only evidence-backed defects with minimal fixes. Use for backend architecture reviews, module or service boundaries, and external integrations; design alternatives only when requested. A review does not authorize implementation.
 ---
 
 # Review Backend Architecture
+
+Соблюдать действующие общие и проектные инструкции.
 
 Проверять согласованную область по текущему коду и требованиям. Не искать обязательное количество замечаний и не превращать ревью в перепроектирование.
 
@@ -17,7 +19,7 @@ description: Review backend component boundaries, imports, contracts, coupling, 
 ## Проверить границы компонентов
 
 - Проследить реальные импорты, экспорты и цепочки вызовов: какой компонент использует другой, через какой контракт и какие внутренние детали ему известны.
-- Проверить направления зависимостей и разделение прикладных контрактов с GraphQL, HTTP, ORM и внешними API по принятым правилам проекта. Wiring в composition root и явно согласованные исключения учитывать до вывода о нарушении.
+- Проверить направления зависимостей и отделение прикладных контрактов от транспорта, хранения и внешних систем по принятым правилам проекта. Wiring в composition root и явно согласованные исключения учитывать до вывода о нарушении.
 - Глубокий импорт оценивать по обходу публичного интерфейса и доступу к чужим внутренностям, а не по числу каталогов в пути. Показать владельца контракта и конкретную пересечённую границу.
 - Передачу аргументов оценивать по ответственности: нужен ли параметр принимающему компоненту или промежуточные компоненты лишь переносят чужую внутреннюю деталь. Число аргументов само по себе не доказывает лишнюю связанность.
 - Проверить владельцев данных, бизнес-решений и сквозных политик. Не дробить намеренно единый сервис авторизации и не размножать проверки по слоям ради общего шаблона; искать конкретное нарушение контракта или ответственности.
@@ -66,11 +68,11 @@ description: Review backend component boundaries, imports, contracts, coupling, 
 
 - публичные контракты и producer/consumer; единицы и граничные значения; происхождение и преобразование данных;
 - lifecycle, повтор и конкурентные вызовы; timeout, отмена, частичные отказы; side effects и cleanup при streaming;
-- права, привязка grants к субъекту, ресурсу и действиям; модель угроз, валидация и защита секретов;
+- права, привязка контекста доступа к субъекту, ресурсу и действиям; модель угроз, валидация и защита секретов;
 - domain/conflict errors и retryability; безопасная диагностика; production dependencies, entrypoint, deploy и rollback;
 - эксплуатационная сложность, стоимость владения и миграция.
 
-Считать LLM и внешние входы недоверенными; критические проверки должны иметь доверенного владельца. Не добавлять микросервисы, Kafka, Kubernetes, CQRS, Event Sourcing или общие абстракции без конкретной потребности. Для запрошенного усложнения показать проблему, цену, простой вариант и условие пересмотра.
+Считать внешние входы и результаты недоверенными; критические проверки должны иметь доверенного владельца. Новые инфраструктурные зависимости, архитектурные шаблоны и общие абстракции обосновывать конкретной потребностью. Для запрошенного усложнения показать проблему, цену, простой вариант и условие пересмотра.
 
 ## Представить результат и завершить
 
