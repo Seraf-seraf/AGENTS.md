@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "backend-engineering",
-  "version": "0.2.4",
-  "description": "Backend architecture review, behavior verification, CI/CD and infrastructure execution, and Russian Conventional Commits.",
+  "version": "0.3.0",
+  "description": "Оценка необходимости и сложности backend-изменений, рисков и стоимости проверок. Ревью архитектуры с учётом сценариев потребителей, проверка результата и восстановления без лишних ограничений. CI/CD, инфраструктура и русские Conventional Commits.",
   "author": {
     "name": "Seraf"
   },
@@ -13,6 +13,21 @@
     "code-review",
     "ci-cd",
     "ansible",
-    "git"
-  ]
+    "git",
+    "change-assessment",
+    "consumer-contracts",
+    "risk-based-verification"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "backend-engineering",
+        "shortDescription": "Оценка и проверка изменений",
+        "longDescription": "Оценка необходимости и сложности backend-изменений, рисков и стоимости проверок. Ревью архитектуры с учётом сценариев потребителей, проверка результата и восстановления без лишних ограничений. CI/CD, инфраструктура и русские Conventional Commits.",
+        "developerName": "Seraf",
+        "category": "Other",
+        "capabilities": []
+      }
+    }
+  }
 }
