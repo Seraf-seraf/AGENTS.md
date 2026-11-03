@@ -1,9 +1,9 @@
 ---
-name: plan-backend-change
+name: write-implementation-plan
 description: Create or revise an implementation plan in Markdown for an executing agent from current code, specifications and agreed decisions. Use when asked to write a backend task plan, split requirements into bounded implementation stages or prepare a handoff to another agent. Define each stage's start, end, checks and exact Git stage. Ordinary reviews, assessments and execution of an existing plan do not by themselves trigger plan creation.
 ---
 
-# План задачи для исполнительного агента
+# Составление плана реализации
 
 Соблюдать действующие общие и проектные инструкции. Результат — однозначный MD-план с принятыми проектными решениями; исполнитель не должен заново проектировать задачу. Подготовка плана не запускает реализацию, staging или коммиты описанной задачи.
 

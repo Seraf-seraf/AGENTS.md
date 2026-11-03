@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "backend-engineering",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Оценка необходимости и сложности backend-изменений, рисков и стоимости проверок. Ревью архитектуры с учётом сценариев потребителей, проверка результата и восстановления без лишних ограничений. CI/CD, инфраструктура и русские Conventional Commits.",
   "author": {
     "name": "Seraf"
