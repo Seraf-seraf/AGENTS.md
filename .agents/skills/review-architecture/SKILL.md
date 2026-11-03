@@ -1,9 +1,9 @@
 ---
-name: review-backend-architecture
+name: review-architecture
 description: Review backend component boundaries, imports, contracts, coupling, consumer impact, and refactoring plans within the user-requested scope. Report only evidence-backed defects with minimal fixes. Use for backend architecture reviews, module or service boundaries, and external integrations; design alternatives only when requested. A review does not authorize implementation.
 ---
 
-# Review Backend Architecture
+# Проверка архитектуры
 
 Соблюдать действующие общие и проектные инструкции.
 
@@ -18,7 +18,7 @@ description: Review backend component boundaries, imports, contracts, coupling, 
 
 ## Выбрать глубину анализа
 
-Кратко определить, затрагивает ли решение наблюдаемые результаты, доступные действия или ограничения потребителей. Для локальной правки без такого влияния достаточно обычной проверки границ. При неясной необходимости механизма, выборе между решениями или существенном изменении контрактов использовать [оценку изменения](../assess-backend-change/SKILL.md); готовую оценку переиспользовать без повторного отчёта. Выбранная глубина не расширяет запрошенную область и не отменяет обязательные правила проекта.
+Кратко определить, затрагивает ли решение наблюдаемые результаты, доступные действия или ограничения потребителей. Для локальной правки без такого влияния достаточно обычной проверки границ. При неясной необходимости механизма, выборе между решениями или существенном изменении контрактов использовать [оценку изменения](../assess-change/SKILL.md); готовую оценку переиспользовать без повторного отчёта. Выбранная глубина не расширяет запрошенную область и не отменяет обязательные правила проекта.
 
 ## Проверить границы компонентов
 

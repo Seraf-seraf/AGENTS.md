@@ -1,0 +1,4 @@
+interface:
+  display_name: "Подготовка коммита"
+  short_description: "Подготовить сообщение и состав коммита на русском"
+  default_prompt: "Используй $prepare-commit, чтобы изучить текущие изменения и подготовить Conventional Commit на русском."

@@ -1,12 +1,22 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "backend-engineering",
-  "version": "0.4.1",
-  "description": "Оценка необходимости и сложности backend-изменений, рисков и стоимости проверок. Ревью архитектуры с учётом сценариев потребителей, проверка результата и восстановления без лишних ограничений. CI/CD, инфраструктура и русские Conventional Commits.",
   "author": {
-    "name": "Seraf"
+    "email": "snajpershouyt@gmail.com",
+    "name": "Serafim Kravchuk"
   },
-  "repository": "https://github.com/Seraf-seraf/AGENTS.md",
+  "description": "\u041f\u043b\u0430\u043d\u044b \u0434\u043b\u044f \u0438\u0441\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0445 \u0430\u0433\u0435\u043d\u0442\u043e\u0432, \u043e\u0446\u0435\u043d\u043a\u0430 \u0437\u0430\u0434\u0430\u0447, \u0440\u0435\u0432\u044c\u044e backend-\u0430\u0440\u0445\u0438\u0442\u0435\u043a\u0442\u0443\u0440\u044b \u0438 \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0430 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0439. CI/CD, \u0438\u043d\u0444\u0440\u0430\u0441\u0442\u0440\u0443\u043a\u0442\u0443\u0440\u0430 \u0438 \u043f\u043e\u0434\u0433\u043e\u0442\u043e\u0432\u043a\u0430 \u043a\u043e\u043c\u043c\u0438\u0442\u043e\u0432 \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "capabilities": [],
+        "category": "Other",
+        "developerName": "Serafim Kravchuk",
+        "displayName": "Software Engineering",
+        "longDescription": "\u041f\u043b\u0430\u043d\u044b \u0434\u043b\u044f \u0438\u0441\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0445 \u0430\u0433\u0435\u043d\u0442\u043e\u0432, \u043e\u0446\u0435\u043d\u043a\u0430 \u0437\u0430\u0434\u0430\u0447, \u0440\u0435\u0432\u044c\u044e backend-\u0430\u0440\u0445\u0438\u0442\u0435\u043a\u0442\u0443\u0440\u044b \u0438 \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0430 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0439. CI/CD, \u0438\u043d\u0444\u0440\u0430\u0441\u0442\u0440\u0443\u043a\u0442\u0443\u0440\u0430 \u0438 \u043f\u043e\u0434\u0433\u043e\u0442\u043e\u0432\u043a\u0430 \u043a\u043e\u043c\u043c\u0438\u0442\u043e\u0432 \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c.",
+        "shortDescription": "\u041f\u043b\u0430\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u0438 \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0430 \u043a\u043e\u0434\u0430"
+      }
+    }
+  },
   "keywords": [
     "backend",
     "architecture",
@@ -18,16 +28,7 @@
     "consumer-contracts",
     "risk-based-verification"
   ],
-  "extensions": {
-    "com.openai": {
-      "interface": {
-        "displayName": "backend-engineering",
-        "shortDescription": "Оценка и проверка изменений",
-        "longDescription": "Оценка необходимости и сложности backend-изменений, рисков и стоимости проверок. Ревью архитектуры с учётом сценариев потребителей, проверка результата и восстановления без лишних ограничений. CI/CD, инфраструктура и русские Conventional Commits.",
-        "developerName": "Seraf",
-        "category": "Other",
-        "capabilities": []
-      }
-    }
-  }
+  "name": "software-engineering",
+  "repository": "https://github.com/Seraf-seraf/AGENTS.md",
+  "version": "0.5.0"
 }

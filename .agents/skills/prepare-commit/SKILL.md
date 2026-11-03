@@ -1,9 +1,9 @@
 ---
-name: prepare-russian-commit
+name: prepare-commit
 description: Prepare or create a Conventional Commit with a concise Russian description based on the actual Git diff. Use only when the user explicitly asks to draft a commit message, create a commit, or split changes into commits. Preserve unrelated work, verify the intended scope, omit AI attribution, and never push unless separately requested.
 ---
 
-# Prepare Russian Commit
+# Подготовка коммита
 
 Соблюдать действующие общие и проектные инструкции.
 
@@ -17,7 +17,7 @@ description: Prepare or create a Conventional Commit with a concise Russian desc
 4. Отделить пользовательские и несвязанные изменения. Не включать их в staging и не откатывать.
 5. Если запрошен реальный коммит, убедиться, что релевантные проверки выполнены или явно сообщить, чего не удалось проверить.
 
-Для изменения исполняемого CI/CD/IaC до коммита выполнить локальные проверки, выбранные по изменённому контракту и его потребителям по [CI/CD-навыку](../ci-cd-ansible/SKILL.md), сохраняя обязательные gates проекта и порядок подготовки стабильного кандидата. Сообщение об ограничении не заменяет прохождение gate или согласованное исключение. Успешную локальную проверку отличать от последующих подтверждений реального CI и тестового deployment; разрешение на коммит само по себе не разрешает push или deployment.
+Для изменения исполняемого CI/CD/IaC до коммита выполнить локальные проверки, выбранные по изменённому контракту и его потребителям по [CI/CD-навыку](../ci-cd/SKILL.md), сохраняя обязательные gates проекта и порядок подготовки стабильного кандидата. Сообщение об ограничении не заменяет прохождение gate или согласованное исключение. Успешную локальную проверку отличать от последующих подтверждений реального CI и тестового deployment; разрешение на коммит само по себе не разрешает push или deployment.
 
 ## Определить границы коммита
 

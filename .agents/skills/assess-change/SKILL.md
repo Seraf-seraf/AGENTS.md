@@ -1,9 +1,9 @@
 ---
-name: assess-backend-change
+name: assess-change
 description: Assess the necessity, implementation complexity, consumer impact, uncertainty, and verification cost of a proposed backend feature or change. Use when choosing scope, comparing approaches, estimating complexity, or deciding proportionate checks for changed contracts, state, shared resources, data, or integrations. Reuse an existing assessment; do not turn routine local edits into a separate audit. Assessment does not authorize implementation or publication.
 ---
 
-# Оценка backend-изменения
+# Оценка задачи
 
 Соблюдать действующие общие и проектные инструкции. Навык выдаёт инженерную оценку, а не реализует функционал и не управляет работой через внешние системы учёта. Для оценки достаточно запроса и доступных требований, кода, потребителей и проверок; отсутствие кода обозначать как ограничение точности, а не восполнять выдуманными деталями.
 
@@ -43,6 +43,6 @@ description: Assess the necessity, implementation complexity, consumer impact, u
 
 При использовании внутри ревью или проверки не создавать обязательный отдельный отчёт, балльную таблицу, ADR или план. Существующую оценку переиспользовать и уточнять только при изменении предпосылок, области или выявленных зависимостей. Результат не зависит от конкретного трекера, его сущностей или MCP-инструментов и не вызывает их.
 
-Передавать критерии в профильную работу: [архитектурное ревью](../review-backend-architecture/SKILL.md), [проверку изменения](../verify-backend-change/SKILL.md) или [CI/CD](../ci-cd-ansible/SKILL.md) только в рамках запроса. Эти ссылки не предписывают запускать все навыки и не создают цикл повторной оценки. Оценка не даёт разрешения на правки, коммит, публикацию или изменение внешних данных.
+Передавать критерии в профильную работу: [архитектурное ревью](../review-architecture/SKILL.md), [проверку изменения](../verify-change/SKILL.md) или [CI/CD](../ci-cd/SKILL.md) только в рамках запроса. Эти ссылки не предписывают запускать все навыки и не создают цикл повторной оценки. Оценка не даёт разрешения на правки, коммит, публикацию или изменение внешних данных.
 
 [Калибровочные сценарии](references/calibration-scenarios.md) читать при изменении самого навыка или спорном выборе глубины, а не для каждой задачи. Это примеры ожидаемых решений, не универсальная классификация проектов.

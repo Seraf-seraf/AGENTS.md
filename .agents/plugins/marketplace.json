@@ -1,11 +1,11 @@
 {
-  "name": "backend-engineering",
+  "name": "software-engineering",
   "interface": {
-    "displayName": "Backend Engineering"
+    "displayName": "Software Engineering"
   },
   "plugins": [
     {
-      "name": "backend-engineering",
+      "name": "software-engineering",
       "source": {
         "source": "local",
         "path": "./.agents"
