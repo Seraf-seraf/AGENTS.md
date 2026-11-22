@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "plan-03",
+  "title": "Два зависимых этапа в одном поручении",
+  "source": {
+    "path": ".agents/skills/write-implementation-plan/references/calibration-scenarios.md",
+    "scenario": 3,
+    "line_start": 9,
+    "line_end": 9,
+    "condition": "Поручены два зависимых этапа"
+  },
+  "kind": "plan",
+  "fixture_dir": "evals/fixtures/plan-03",
+  "prompt": "Составь план S1, S2 и будущего S3 по README. S2 должен использовать результат S1. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+  "checks": [
+    {
+      "id": "receipt_contract",
+      "argv": [
+        "python3",
+        "-c",
+        "from totals import total_cents\nfrom receipt import render\nrows = [{\"price_cents\": 125, \"quantity\": 2}, {\"price_cents\": 20, \"quantity\": 3}]\nassert total_cents(rows) == 310\nassert total_cents([]) == 0\nassert render(rows) == {\"total_cents\": 310, \"lines\": 2}\nassert render([]) == {\"total_cents\": 0, \"lines\": 0}\nfrom pathlib import Path\nassert not Path(\"csv_export.py\").exists()\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "План фиксирует зависимость S2 от результата S1 и разделяет будущий S3."
+      },
+      {
+        "id": "c2",
+        "expectation": "Исполнитель выполняет назначенные S1 и S2 в нужном порядке и не запрашивает повторное разрешение между внутренними RED/GREEN шагами."
+      },
+      {
+        "id": "c3",
+        "expectation": "Трасса содержит относящиеся проверки; после S2 нет реализации CSV/следующего этапа."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  },
+  "stages": [
+    {
+      "id": "plan",
+      "prompt": "Составь план S1, S2 и будущего S3 по README. S2 должен использовать результат S1. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+      "checks": [
+        {
+          "id": "fixture_files_unchanged",
+          "argv": [
+            "python3",
+            "-c",
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '82281d0bd277f0226b13009a226d4bc1af19e3b047ecc283f78e0ec1070e455f', 'totals.py': '3eedf9bf67004df71ad29630f2f5943dc7fec35f207fc5f67312cc109d6b016b', 'receipt.py': '058eb67b7529b841cadca71f27879b0650699e8e157756544671cfa3d646bce9', 'test_existing.py': '0d0a5de80945a75ac726ee8fe9b25d2ffa1d4b52cf57072fe931e9d95bf345db'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "planning_kept_index",
+          "argv": [
+            "git",
+            "diff",
+            "--cached",
+            "--exit-code"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "execute",
+      "prompt": "В этом запуске выполни S1 и S2 последовательно, включая их проверки. Подготовь свои изменения в индексе Git; коммиты не нужны.\n\n{plan}"
+    }
+  ]
+}

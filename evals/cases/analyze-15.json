@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "analyze-15",
+  "title": "Составной запрос оценки, плана и реализации",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 15,
+    "line_start": 30,
+    "line_end": 30,
+    "condition": "Пользователь отдельно поручил оценку, план и реализацию"
+  },
+  "kind": "execution",
+  "fixture_dir": "evals/fixtures/analyze-15",
+  "prompt": "Оцени доработку shipping по README, составь короткий план в PLAN.md и реализуй его с проверкой. Все три результата поручены сейчас; коммит не нужен.",
+  "checks": [
+    {
+      "id": "pickup_and_delivery",
+      "argv": [
+        "python3",
+        "-c",
+        "from shipping import fee\nfor weight in [0, 1, 1000, 1001, 5000]:\n    assert fee(weight, pickup=True) == 0\n    expected = 200 if weight <= 1000 else 400\n    assert fee(weight) == expected\n    assert fee(weight, pickup=False) == expected\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "plan_present",
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path\nassert Path(\"PLAN.md\").is_file()"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "no_commit",
+      "argv": [
+        "python3",
+        "-c",
+        "import subprocess\nassert subprocess.check_output([\"git\", \"rev-list\", \"--count\", \"HEAD\"], text=True).strip() == \"1\""
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Выполняет все явно порученные результаты: оценка, план, работающий код и проверка."
+      },
+      {
+        "id": "c2",
+        "expectation": "Переиспользует одни факты между результатами, не требует нового разрешения на уже порученную реализацию."
+      },
+      {
+        "id": "c3",
+        "expectation": "Не расширяет задачу и не делает commit."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "analyze-02",
+  "title": "Локальная правка проверки владельца",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 2,
+    "line_start": 10,
+    "line_end": 10,
+    "condition": "Одна строка меняет проверку владельца документа; ошибочное разрешение раскрывает чужие данные."
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-02",
+  "prompt": "В proposal.diff предложили упростить проверку доступа. Оцени сложность, риски и проверки перед принятием этой правки. Код пока не меняй.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '9f4bf8e0b6e8353d928969a8b3eeaf4a63f180ce8ceca631261915703744bab5', 'documents.py': 'f7d38a70e152af8f92c156ebaf207830572ee1fd27c70a4c4ca8b6f0a6f4f487', 'proposal.diff': 'd298ee54d6753dbe185efc4a92a7b371a02fa4601592afe2d4f015b5a2165c95', 'test_documents.py': 'be740b51bb5b69d12f7174fd2696a4793895cbcc68d6f3ed227fe7f6796af975', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Различает малую сложность одной строки и существенный риск раскрытия чужого документа."
+      },
+      {
+        "id": "c2",
+        "expectation": "Обнаруживает нарушение owner-контракта, рассматривает разрешение владельцу и отказ другому пользователю на download и preview."
+      },
+      {
+        "id": "c3",
+        "expectation": "Не предлагает отключать авторизацию; ограничивает глубокую проверку затронутыми путями."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "analyze-05",
+  "title": "Отказ необязательной аналитики",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 5,
+    "line_start": 13,
+    "line_end": 13,
+    "condition": "Необязательная аналитика недоступна; по контракту это не препятствует сохранению заказа, данные заказа сохраняются независимо."
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-05",
+  "prompt": "Оцени поведение checkout при недоступности аналитики и предложи достаточное исправление и проверки. Пока только разбор.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '40adc5723d2905aafc3ba24101c873fa161582cf3b79248cdf92d4f897a5bdc8', 'checkout.py': '7596d69f3bd5b6dbdc27ae724fecde291d44eb4a88c961789adebc08d65d7fa3', 'test_checkout.py': 'e60f12eeac57242187c7699b6be53cc3d601c2dc5cb90fc90353abd54fc5e295', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Показывает, что текущий exception аналитики происходит до store.append и мешает сохранить заказ."
+      },
+      {
+        "id": "c2",
+        "expectation": "Предлагает локализовать отказ аналитики и сохранить наблюдаемость ошибки, не выдавая её за успех."
+      },
+      {
+        "id": "c3",
+        "expectation": "Сохраняет независимое сохранение заказа и не навязывает глобальную блокировку/брокер без основания."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

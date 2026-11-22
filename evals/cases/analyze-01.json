@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "analyze-01",
+  "title": "Переименование внутренней функции",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 1,
+    "line_start": 9,
+    "line_end": 9,
+    "condition": "Внутренний чистый вспомогательный компонент переименовывается; все вызовы известны, поведение и публичный API не меняются, локальное покрытие достаточно."
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-01",
+  "prompt": "Оцени сложность, риски и достаточные проверки переименования _normalize в _normalize_name в labels.py. Поведение display_name менять не нужно. Правки пока не вноси.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '349de0fd3e8c09f687a8c7a45337b8e40837682c75af7cc07e14e7570bb6cf6e', 'labels.py': '8d6b449b3b3315f05ceaec6725038da56bf3f32202ceba7ff38984892e01e204', 'test_labels.py': '0f818083f66cbcbf7f8870fed4ff566ffe37523f2e8a3e2bce01bb169f495151', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Оценка опирается на private helper, известные вызовы и сохраняемый публичный результат."
+      },
+      {
+        "id": "c2",
+        "expectation": "Выбрана узкая проверка вызовов и существующих тестов; не навязаны UX-аудит, браузерный E2E или новые слои."
+      },
+      {
+        "id": "c3",
+        "expectation": "Оценка не превращена в реализацию, отдельный план, трекер или обязательные баллы/часы."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

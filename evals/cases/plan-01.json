@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "id": "plan-01",
+  "title": "Один этап по готовому исследованию",
+  "source": {
+    "path": ".agents/skills/write-implementation-plan/references/calibration-scenarios.md",
+    "scenario": 1,
+    "line_start": 7,
+    "line_end": 7,
+    "condition": "Небольшая доработка по готовому исследованию"
+  },
+  "kind": "plan",
+  "fixture_dir": "evals/fixtures/plan-01",
+  "prompt": "Составь план небольшой доработки shipping по README и готовому research.md. Отдельного исследования не требуется. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+  "checks": [
+    {
+      "id": "pickup_and_delivery",
+      "argv": [
+        "python3",
+        "-c",
+        "from shipping import fee\nfor weight in [0, 1, 1000, 1001, 5000]:\n    assert fee(weight, pickup=True) == 0\n    expected = 200 if weight <= 1000 else 400\n    assert fee(weight) == expected\n    assert fee(weight, pickup=False) == expected\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "existing_tests_pass",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "План содержит один достаточный этап с точными существующими путями и исполнимой unittest-командой; не создаёт искусственных сервисов или повторного исследования."
+      },
+      {
+        "id": "c2",
+        "expectation": "Планирование сохраняет исходники и Git index."
+      },
+      {
+        "id": "c3",
+        "expectation": "Новый исполнитель получает план и реализует pickup и прежние delivery-границы с проверками."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  },
+  "stages": [
+    {
+      "id": "plan",
+      "prompt": "Составь план небольшой доработки shipping по README и готовому research.md. Отдельного исследования не требуется. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+      "checks": [
+        {
+          "id": "fixture_files_unchanged",
+          "argv": [
+            "python3",
+            "-c",
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '1fb016bb7025254f080a180bfc1618ab7f5d8dda466f4f35987f7150b6ba7e41', 'shipping.py': 'ebbb434d0c31c4b96e1ab114a1b735f2098f1b98999565aa356124ada021b2dd', 'research.md': '847e05132e4f872dd6a15b4fe7c095d0307fdd68ab699fb1d08b9e29822b4faa', 'test_shipping.py': 'e2c14c90841b7aba021ba0b6fd875a997fa1abe038e8255a3a21f8f552e7b68f'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "planning_kept_index",
+          "argv": [
+            "git",
+            "diff",
+            "--cached",
+            "--exit-code"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "execute",
+      "prompt": "Выполни единственный этап следующего плана до его результата. Добавь относящиеся изменения в индекс Git, коммит не делай.\n\n{plan}"
+    }
+  ]
+}

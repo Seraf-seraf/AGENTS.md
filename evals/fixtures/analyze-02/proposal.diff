@@ -1,0 +1,2 @@
+-    return user["active"] and document["owner_id"] == user["id"]
++    return user["active"]

@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "id": "plan-10",
+  "title": "Проверка исследования без искусственного RED",
+  "source": {
+    "path": ".agents/skills/write-implementation-plan/references/calibration-scenarios.md",
+    "scenario": 10,
+    "line_start": 16,
+    "line_end": 16,
+    "condition": "Рефакторинг, документация или исследование"
+  },
+  "kind": "plan",
+  "fixture_dir": "evals/fixtures/plan-10",
+  "prompt": "Составь план исследовательского этапа R1 по README. Результат исполнителя нужен в ответе; менять код, документацию и делать коммит в этой задаче не требуется. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': 'e8760ff195a2ff55624d919fef3a68d90c6caf79ee01827a215f24f59a5a2bb4', 'labels.py': '87649224bef74bdb41260e7bb8bd1b393da872a54a41579f7197d20eea857250', 'test_labels.py': 'd9fc6d742dae2e7e2e0048a69d6ecadca7b4a959b444673a5f10e20cea7bf308'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "no_fictitious_commit",
+      "argv": [
+        "python3",
+        "-c",
+        "import subprocess\nassert subprocess.check_output([\"git\", \"rev-list\", \"--count\", \"HEAD\"], text=True).strip() == \"1\""
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "План исследования проверяет факты чтением кода и относящимися примерами; не требует искусственного падения теста или изменений ради TDD."
+      },
+      {
+        "id": "c2",
+        "expectation": "Executor сообщает фактическую нормализацию пустого ввода и whitespace, различая чтение и реально выполненные проверки."
+      },
+      {
+        "id": "c3",
+        "expectation": "Нет фиктивного commit, правок исходников/тестов или нового артефакта реализации при отсутствии изменения."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  },
+  "stages": [
+    {
+      "id": "plan",
+      "prompt": "Составь план исследовательского этапа R1 по README. Результат исполнителя нужен в ответе; менять код, документацию и делать коммит в этой задаче не требуется. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+      "checks": [
+        {
+          "id": "fixture_files_unchanged",
+          "argv": [
+            "python3",
+            "-c",
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': 'e8760ff195a2ff55624d919fef3a68d90c6caf79ee01827a215f24f59a5a2bb4', 'labels.py': '87649224bef74bdb41260e7bb8bd1b393da872a54a41579f7197d20eea857250', 'test_labels.py': 'd9fc6d742dae2e7e2e0048a69d6ecadca7b4a959b444673a5f10e20cea7bf308'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "planning_kept_index",
+          "argv": [
+            "git",
+            "diff",
+            "--cached",
+            "--exit-code"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "execute",
+      "prompt": "Выполни только исследовательский R1 следующего плана и сообщи результат в ответе.\n\n{plan}"
+    }
+  ]
+}

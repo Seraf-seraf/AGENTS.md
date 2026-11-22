@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "analyze-10",
+  "title": "Выбор способа вынести отправку в очередь",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 10,
+    "line_start": 25,
+    "line_end": 25,
+    "condition": "«Как лучше вынести отправку в очередь», решения ещё нет"
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-10",
+  "prompt": "Как лучше вынести отправку писем в очередь в этом проекте? Выбери достаточное решение по коду и требованиям, опиши существенные отказы и неизвестные.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '0c33b7c5f0a1d3187dc868551fefe7d16790c95c9bd5daaadc61c9b43d79592a', 'orders.py': 'c4efc055129c5a3db9d495186e7b45d935bb6669ec001b758c4d669a23bf3d40', 'schema.sql': '7aaef68bddce0c55112d373fd31f15da6f68f8a786ebd62fa47884c6263cda36', 'test_orders.py': '2d1a6692455b6d3431e49f469237e3b3f210105efe508e4f7f509929b31a629a', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Выбирает решение, обеспечивающее связь коммита заказа и долговечной задачи, повтор и стабильный id; допустимы разные обоснованные реализации."
+      },
+      {
+        "id": "c2",
+        "expectation": "Учитывает сбой после commit и до send, перезапуск worker и повтор доставки."
+      },
+      {
+        "id": "c3",
+        "expectation": "Не требует отдельного полного ревью, плана или внедрения конкретного брокера без основания; код не меняет."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

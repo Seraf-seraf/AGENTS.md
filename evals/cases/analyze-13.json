@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "id": "analyze-13",
+  "title": "Порученная реализация поля и фильтра",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 13,
+    "line_start": 28,
+    "line_end": 28,
+    "condition": "«Добавь поле и фильтрацию; подготовь изменения»"
+  },
+  "kind": "execution",
+  "fixture_dir": "evals/fixtures/analyze-13",
+  "prompt": "Добавь поле status и фильтрацию в list_orders по контракту README. Подготовь изменения и проверь поведение. Коммит и отдельный план не нужны.",
+  "checks": [
+    {
+      "id": "status_filter_contract",
+      "argv": [
+        "python3",
+        "-c",
+        "import copy\nfrom orders import list_orders\nrows = [{\"id\": \"a\", \"status\": \"open\"}, {\"id\": \"b\", \"status\": \"archived\"}, {\"id\": \"c\", \"status\": \"open\"}]\noriginal = copy.deepcopy(rows)\nassert list_orders(rows) == rows\nassert list_orders(rows, status=None) == rows\nassert list_orders(rows, status=\"archived\") == [rows[1]]\nassert list_orders(rows, status=\"open\") == [rows[0], rows[2]]\nassert list_orders([], status=\"open\") == []\nassert rows == original\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "no_unrequested_commit",
+      "argv": [
+        "python3",
+        "-c",
+        "import subprocess\nassert subprocess.check_output([\"git\", \"rev-list\", \"--count\", \"HEAD\"], text=True).strip() == \"1\""
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Реализует порученную функцию и проверяет контракт, не останавливается на оценке или предложении плана."
+      },
+      {
+        "id": "c2",
+        "expectation": "Сохраняет порядок, входные данные и корректную семантику status=None."
+      },
+      {
+        "id": "c3",
+        "expectation": "Не создаёт обязательные отдельные отчёты и не делает коммит без поручения."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "analyze-04",
+  "title": "Неизвестный исход списания",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 4,
+    "line_start": 12,
+    "line_end": 12,
+    "condition": "Запись платежа могла пройти, но ответ потерян; повтор с новым идентификатором может повторить списание."
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-04",
+  "prompt": "Проверь поведение pay при потере ответа gateway. Оцени риск и минимальное изменение с проверками. Реализацию пока не меняй.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '96a88e6d8e2460150dd21a75d34d4c0450192e97210dba3f32e1355562c087a1', 'payments.py': '7a2dd51740edc4c2eb7e6d9a220d219d1e5808b04cf2faf51c11102d7d4cb95f', 'test_payments.py': '7e931f90faee30090bf1601142e8a51a264b26215fb255f4a51d3f2026855b62', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Отличает timeout от доказанного отказа; видит запись до исключения и новый request_id при повторе."
+      },
+      {
+        "id": "c2",
+        "expectation": "Предлагает сохранить идентификатор либо сверить lookup в рамках принятого gateway-контракта."
+      },
+      {
+        "id": "c3",
+        "expectation": "Проверка включает потерю ответа после записи и отсутствие второго списания; не заявляет реальную внешнюю интеграцию проверенной локальной моделью."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

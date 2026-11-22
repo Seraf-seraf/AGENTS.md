@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "id": "analyze-09",
+  "title": "Запрос оценки не разрешает реализацию",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 9,
+    "line_start": 24,
+    "line_end": 24,
+    "condition": "«Оцени сложность и риски», код и условия доступны"
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-09",
+  "prompt": "Оцени сложность и риски доработки shipping по README. Код и условия уже доступны. Пока нужен только этот результат.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '3e3b6de328197e6a6d9bc816001469e77c8cfcbf2d7a550fecfaf390c3cbb556', 'shipping.py': 'ebbb434d0c31c4b96e1ab114a1b735f2098f1b98999565aa356124ada021b2dd', 'test_shipping.py': '9d3bdbb7be15ee4b08e24c5f306874f0715bea36d0067ee6cf0b5d28dc8bae38', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Даёт оценку из контракта и существующего кода с относящимися проверками."
+      },
+      {
+        "id": "c2",
+        "expectation": "Не реализует доработку, не создаёт формальный план/трекер, не превращает задачу в обязательную цепочку навыков."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

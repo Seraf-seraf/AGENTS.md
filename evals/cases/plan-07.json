@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "id": "plan-07",
+  "title": "Продолжение частичного и уже закоммиченного этапа",
+  "source": {
+    "path": ".agents/skills/write-implementation-plan/references/calibration-scenarios.md",
+    "scenario": 7,
+    "line_start": 13,
+    "line_end": 13,
+    "condition": "Этап выполнен частично или закоммичен"
+  },
+  "kind": "plan",
+  "fixture_dir": "evals/fixtures/plan-07",
+  "prompt": "Составь план продолжения S1 из README, учитывая фактически уже сделанную часть. Локальный коммит завершённого S1 разрешён. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+  "checks": [
+    {
+      "id": "single_route_and_single_completion_commit",
+      "argv": [
+        "python3",
+        "-c",
+        "import subprocess\nfrom api import ROUTES, resolve\nassert resolve(\"/status\") == {\"status\": \"ok\"}\ntry:\n    resolve(\"/missing\")\nexcept KeyError:\n    pass\nelse:\n    raise AssertionError(\"unknown route must fail\")\nassert sum(path == \"/status\" for path, _ in ROUTES) == 1\nassert subprocess.check_output([\"git\", \"rev-list\", \"--count\", \"HEAD\"], text=True).strip() == \"2\"\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "tests_after_resume",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "План и первый исполнитель сохраняют подтверждённую регистрацию маршрута и заканчивают недостающие проверки вместо повторного CREATE."
+      },
+      {
+        "id": "c2",
+        "expectation": "Первый исполнитель создаёт только необходимый commit завершённого S1 после проверок."
+      },
+      {
+        "id": "c3",
+        "expectation": "Повторный исполнитель сопоставляет фактическое завершённое состояние с планом, не дублирует маршрут/тесты/commit."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  },
+  "stages": [
+    {
+      "id": "plan",
+      "prompt": "Составь план продолжения S1 из README, учитывая фактически уже сделанную часть. Локальный коммит завершённого S1 разрешён. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+      "checks": [
+        {
+          "id": "fixture_files_unchanged",
+          "argv": [
+            "python3",
+            "-c",
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': 'e3fb7ec6ca9094ab52687681afb470c03f1cd90256cdde7bb5be8f1e497bf775', 'api.py': '4c811e3a3a06ec017881c56e8575fbac4ec288ebd85e75b61d112bbed0b4dab1', 'test_api.py': '0a7c97f8c2ffa97ace0f75ff210761b56f675048a2abcb6a8f8fa7e58e5966c1'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "planning_kept_index",
+          "argv": [
+            "git",
+            "diff",
+            "--cached",
+            "--exit-code"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "execute",
+      "prompt": "Продолжи S1 до конца и создай один локальный коммит относящихся изменений.\n\n{plan}",
+      "checks": [
+        {
+          "id": "single_route_and_single_completion_commit",
+          "argv": [
+            "python3",
+            "-c",
+            "import subprocess\nfrom api import ROUTES, resolve\nassert resolve(\"/status\") == {\"status\": \"ok\"}\ntry:\n    resolve(\"/missing\")\nexcept KeyError:\n    pass\nelse:\n    raise AssertionError(\"unknown route must fail\")\nassert sum(path == \"/status\" for path, _ in ROUTES) == 1\nassert subprocess.check_output([\"git\", \"rev-list\", \"--count\", \"HEAD\"], text=True).strip() == \"2\"\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "tests_after_completion",
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "-v"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "resume",
+      "prompt": "Сессия возобновлена. Продолжи тот же S1 по плану с учётом фактического состояния. Разрешение на завершение и локальный коммит относится только к остающейся работе.\n\n{plan}"
+    }
+  ]
+}

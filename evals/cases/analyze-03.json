@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "analyze-03",
+  "title": "Бизнес-состав списка архивных заказов",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 3,
+    "line_start": 11,
+    "line_end": 11,
+    "condition": "API-фильтр затрагивает список архивных заказов; контракт включает архивные заказы, но технический признак «активен» исключает их."
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-03",
+  "prompt": "Проверь фильтрацию list_orders и её влияние на export_ids. Объясни, соответствует ли результат контракту и чем его проверять. Нужен разбор, без исправлений.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': 'ed2e74ae9d999e324416b5be23d110c2f1fe28b613186788a156d79995234c13', 'orders.py': 'b0832bac729389f8563aa1ce61cbc20c040cdecfbf8e7c55e9c42e00501831ba', 'orders.json': '32fa91e540973ab8316a5e17160da4362c7a43eba67385690980a56606fdbf11', 'test_orders.py': 'adacc9473cdea18af31429b705f037bc00d36bab8294e470fe9e059590c796c5', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Прослеживает producer list_orders до consumer export_ids и показывает пропуск архивного заказа b."
+      },
+      {
+        "id": "c2",
+        "expectation": "Отличает технический active от бизнес-условия non-deleted; не переносит active-фильтр на все списки."
+      },
+      {
+        "id": "c3",
+        "expectation": "Предлагает проверку активных, архивных и удалённых записей, не трактует неполные данные как отсутствие записей."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

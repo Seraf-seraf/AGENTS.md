@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "analyze-07",
+  "title": "Брокер без текущей потребности",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 7,
+    "line_start": 15,
+    "line_end": 15,
+    "condition": "Для малой текущей нагрузки предложен брокер «на будущее»; существующий механизм обеспечивает все заданные гарантии."
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-07",
+  "prompt": "Оцени предложение из proposal.md по устройству проекта и текущим требованиям. Нужен выбор решения с основаниями и условием его пересмотра.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': 'edb75688944f8d74f0fc830a2be84682695f9f4e6c37493084e22f0bb360918a', 'outbox.py': '1f78ce91bef0c01279b6c271de7c346231fb15c359208878458ed3a63e282d02', 'proposal.md': 'aef26e8c08d99611597731a135d3a50b4733b89d6dadf1f3281ffdd8826946ee', 'test_outbox.py': '247351363859ba8d4f2b057369e85ce329df94132c88ee3b6c37dccbd9134d41', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Сопоставляет предложение с текущими гарантиями outbox и измеренной нагрузкой; необходимость брокера сейчас не считает доказанной."
+      },
+      {
+        "id": "c2",
+        "expectation": "Сохраняет достаточное существующее решение и обозначает конкретное изменение требований/нагрузки, при котором решение пересматривается."
+      },
+      {
+        "id": "c3",
+        "expectation": "Не добавляет код, инфраструктуру или обязательные проверки несуществующего брокера ради гипотетического роста."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

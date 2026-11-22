@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "id": "analyze-12",
+  "title": "Маршрутизация запроса на план",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 12,
+    "line_start": 27,
+    "line_end": 27,
+    "condition": "«Составь план по готовым решениям»"
+  },
+  "kind": "plan",
+  "fixture_dir": "evals/fixtures/analyze-12",
+  "prompt": "Составь план доработки shipping по готовым решениям из research.md и README. Сохрани его в PLAN.md. Реализацию пока не начинай.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '1fb016bb7025254f080a180bfc1618ab7f5d8dda466f4f35987f7150b6ba7e41', 'shipping.py': 'ebbb434d0c31c4b96e1ab114a1b735f2098f1b98999565aa356124ada021b2dd', 'research.md': '847e05132e4f872dd6a15b4fe7c095d0307fdd68ab699fb1d08b9e29822b4faa', 'test_shipping.py': 'e2c14c90841b7aba021ba0b6fd875a997fa1abe038e8255a3a21f8f552e7b68f'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "plan_saved",
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path\nassert Path(\"PLAN.md\").is_file()\nassert Path(\"PLAN.md\").read_text().strip()"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Ведущий результат — исполнимый план с реальными shipping.py/test_shipping.py и командами."
+      },
+      {
+        "id": "c2",
+        "expectation": "Готовое исследование переиспользовано; проверка актуальности не перерастает в повторный архитектурный аудит."
+      },
+      {
+        "id": "c3",
+        "expectation": "Исходники и индекс Git не меняются при подготовке плана."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

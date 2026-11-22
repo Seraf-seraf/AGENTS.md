@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "plan-04",
+  "title": "Использование существующего сервиса",
+  "source": {
+    "path": ".agents/skills/write-implementation-plan/references/calibration-scenarios.md",
+    "scenario": 4,
+    "line_start": 10,
+    "line_end": 10,
+    "condition": "Нужный сервис уже существует"
+  },
+  "kind": "plan",
+  "fixture_dir": "evals/fixtures/plan-04",
+  "prompt": "Составь план добавления уведомления после submit по README и устройству проекта. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+  "checks": [
+    {
+      "id": "notification_uses_supplied_service",
+      "argv": [
+        "python3",
+        "-c",
+        "from orders import submit\nfrom services import Services\nservices = Services()\nstore = []\nassert submit({\"id\": \"o7\"}, store, services) == \"o7\"\nassert store == [{\"id\": \"o7\"}]\nassert services.notifications.events == [(\"order_created\", {\"order_id\": \"o7\"})]\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "План находит существующий NotificationService и явно использует его либо обоснованно меняет его контракт; не предписывает CREATE дубликата."
+      },
+      {
+        "id": "c2",
+        "expectation": "Исполнитель использует предоставленный services.notifications и сохраняет сохранение заказа и возврат id."
+      },
+      {
+        "id": "c3",
+        "expectation": "Проверяет наблюдаемый event/payload, не подменяет это подсчётом классов."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  },
+  "stages": [
+    {
+      "id": "plan",
+      "prompt": "Составь план добавления уведомления после submit по README и устройству проекта. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+      "checks": [
+        {
+          "id": "fixture_files_unchanged",
+          "argv": [
+            "python3",
+            "-c",
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '1f216c9a59d5626e0a4cb59d163765ec0b6dc3d5217ad568bf8c48e0fed6ac8e', 'services.py': '5425e0fabca234c465e88bf231dc8574f62d079243d82b6994abec6e4c18cc0f', 'orders.py': '2ddc34be729f9e6d09f8cce97e20f25377d003f8238ea335f288c66f438809eb', 'test_orders.py': 'ab2f41021324b922448151e3e09aa872909ed292c359f6ae3644502d34496d64'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "planning_kept_index",
+          "argv": [
+            "git",
+            "diff",
+            "--cached",
+            "--exit-code"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "execute",
+      "prompt": "Выполни назначенный этап уведомления по плану. Без коммита.\n\n{plan}"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "id": "plan-02",
+  "title": "Назначен только второй этап",
+  "source": {
+    "path": ".agents/skills/write-implementation-plan/references/calibration-scenarios.md",
+    "scenario": 2,
+    "line_start": 8,
+    "line_end": 8,
+    "condition": "Три этапа, назначен только второй"
+  },
+  "kind": "plan",
+  "fixture_dir": "evals/fixtures/plan-02",
+  "prompt": "Составь план roadmap из README с этапами S1, S2, S3, учитывая уже выполненный S1. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+  "checks": [
+    {
+      "id": "status_selection",
+      "argv": [
+        "python3",
+        "-c",
+        "import copy\nfrom orders import list_orders\nrows = [{\"id\": \"a\", \"status\": \"open\"}, {\"id\": \"b\", \"status\": \"archived\"}, {\"id\": \"c\", \"status\": \"open\"}]\noriginal = copy.deepcopy(rows)\nassert list_orders(rows) == rows\nassert list_orders(rows, \"archived\") == [rows[1]]\nassert list_orders(rows, \"open\") == [rows[0], rows[2]]\nassert rows == original\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'cli.py': 'd14e1f64fd36d87bfb99540b2dd6f0097b19852ddcb685bb871acd11dc9da373'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Отделяет справочный roadmap и сделанный S1 от исполняемых этапов."
+      },
+      {
+        "id": "c2",
+        "expectation": "Исполнитель реализует только S2; не добавляет --status или другой код S3."
+      },
+      {
+        "id": "c3",
+        "expectation": "Проверки S2 не зависят от будущего CLI; после S2 исполнитель останавливается."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  },
+  "stages": [
+    {
+      "id": "plan",
+      "prompt": "Составь план roadmap из README с этапами S1, S2, S3, учитывая уже выполненный S1. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+      "checks": [
+        {
+          "id": "fixture_files_unchanged",
+          "argv": [
+            "python3",
+            "-c",
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '44b6dfa973410a07c5cd273a982dafe5a1ff8bde3d375f08121d2fac885bd2b5', 'orders.py': 'eb626276750f856a1327fc04b3b97493330006e8d28bf920fb6b22c2a16db297', 'cli.py': 'd14e1f64fd36d87bfb99540b2dd6f0097b19852ddcb685bb871acd11dc9da373', 'test_orders.py': '688afc017c311e9abf403c2fce5b7be895930796bded10b8ab53a6f4885d4e47'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "planning_kept_index",
+          "argv": [
+            "git",
+            "diff",
+            "--cached",
+            "--exit-code"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "execute",
+      "prompt": "Выполни только S2 из плана. Изменения своего этапа добавь в индекс, без коммита.\n\n{plan}"
+    }
+  ]
+}

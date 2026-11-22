@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "id": "plan-06",
+  "title": "Новый HEAD от независимой задачи",
+  "source": {
+    "path": ".agents/skills/write-implementation-plan/references/calibration-scenarios.md",
+    "scenario": 6,
+    "line_start": 12,
+    "line_end": 12,
+    "condition": "Параллельная задача меняет несвязанный код"
+  },
+  "kind": "plan",
+  "fixture_dir": "evals/fixtures/plan-06",
+  "prompt": "Составь план S1 для корректировки greeting по README. В этом проекте параллельно ведётся независимая задача. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+  "checks": [
+    {
+      "id": "trim_and_parallel_work",
+      "argv": [
+        "python3",
+        "-c",
+        "from core import greeting\nfrom pathlib import Path\nimport subprocess\nassert greeting(\"  Ada  \") == \"Hi, Ada!\"\nassert greeting(\"  \") == \"Hi, !\"\nassert Path(\"colleague.py\").read_text() == 'THEME = \"night\"\\n'\nassert subprocess.check_output([\"git\", \"show\", \"HEAD:colleague.py\"], text=True) == 'THEME = \"night\"\\n'\nassert subprocess.check_output([\"git\", \"rev-list\", \"--count\", \"HEAD\"], text=True).strip() == \"2\"\nstaged = subprocess.check_output([\"git\", \"diff\", \"--cached\", \"--name-only\"], text=True).splitlines()\nassert \"colleague.py\" not in staged\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "План связывает начало S1 с нужными контрактами, не с неизменным SHA всего репозитория."
+      },
+      {
+        "id": "c2",
+        "expectation": "Исполнитель продолжает после реального независимого commit, не откатывает colleague.py и не требует повторного разрешения только из-за нового HEAD."
+      },
+      {
+        "id": "c3",
+        "expectation": "Владение общими файлами/индексом описано соразмерно; чужая работа не попадает в изменения своего этапа."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  },
+  "stages": [
+    {
+      "id": "plan",
+      "prompt": "Составь план S1 для корректировки greeting по README. В этом проекте параллельно ведётся независимая задача. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+      "checks": [
+        {
+          "id": "fixture_files_unchanged",
+          "argv": [
+            "python3",
+            "-c",
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '33a2f78e9c445ca8e56c2b71f459f3fb5b1de2ae9047900eeec20814c4e6ec9c', 'core.py': '0813ffc7887b043d12986c5f1b3a523022fc928f15ffa5be1e81c314d2a6b49b', 'colleague.py': '62e43ebeb6cc3238f01447c5c11fc7ad28e0d694845e2c9ec66eed23659dd59f', 'test_core.py': 'cf6499428653a5891615200697b163a7eb6cd34fb5e55a7ead93802a2332dd31'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "planning_kept_index",
+          "argv": [
+            "git",
+            "diff",
+            "--cached",
+            "--exit-code"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "execute",
+      "prompt": "Другой разработчик закончил несвязанную правку после планирования. Выполни S1 следующего плана, свои изменения подготовь в индексе, без коммита.\n\n{plan}",
+      "setup": [
+        {
+          "id": "parallel_commit",
+          "argv": [
+            "python3",
+            "-c",
+            "from pathlib import Path\nimport subprocess\nPath(\"colleague.py\").write_text('THEME = \"night\"\\n')\nsubprocess.run([\"git\", \"add\", \"colleague.py\"], check=True)\nsubprocess.run([\"git\", \"-c\", \"user.name=Fixture Colleague\", \"-c\", \"user.email=colleague@example.invalid\", \"commit\", \"-m\", \"Update unrelated theme\"], check=True)\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    }
+  ]
+}

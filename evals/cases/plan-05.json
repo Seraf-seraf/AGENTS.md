@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "id": "plan-05",
+  "title": "Неизвестный контракт и порученное исследование",
+  "source": {
+    "path": ".agents/skills/write-implementation-plan/references/calibration-scenarios.md",
+    "scenario": 5,
+    "line_start": 11,
+    "line_end": 11,
+    "condition": "Неизвестен существенный контракт библиотеки"
+  },
+  "kind": "plan",
+  "fixture_dir": "evals/fixtures/plan-05",
+  "prompt": "Составь исполнимый план интеграции save_record со storekit 2.4. Отдельное исследование библиотеки сейчас не поручаю. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '0dd990a0b6327c3e3a23f56a867b0c9796bf2379189e0e73239432860791e853', 'vendor/VERSION': '59c27b56b6c84bbb208ce6d9beae6bc04ec565aa84b950f7f16d47ba25966b8b', 'adapter.py': 'b1d6e194d11f5e84c659d415989f199867fe3e1be3dc4eafd91c52c07a694cf8', 'test_adapter.py': '26e3e56242f92f5c88ceda2b9eb8feed39cb1eb11b462839f80dc8cd3c17664b'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Первый план не выдумывает API по имени/версии; существенный отсутствующий контракт обозначен как blocker зависимой реализации."
+      },
+      {
+        "id": "c2",
+        "expectation": "После отдельного поручения план R1 ограничивает источники, метод, ожидаемый проверяемый вывод и условие завершения; R2 зависит от результата."
+      },
+      {
+        "id": "c3",
+        "expectation": "Исполнитель R1 читает предоставленную документацию, устанавливает persist(record_key=..., value=...) и revision, учитывает неизвестный исход TransientStoreError; адаптер не реализует."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  },
+  "stages": [
+    {
+      "id": "plan",
+      "prompt": "Составь исполнимый план интеграции save_record со storekit 2.4. Отдельное исследование библиотеки сейчас не поручаю. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+      "checks": [
+        {
+          "id": "fixture_files_unchanged",
+          "argv": [
+            "python3",
+            "-c",
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '0dd990a0b6327c3e3a23f56a867b0c9796bf2379189e0e73239432860791e853', 'vendor/VERSION': '59c27b56b6c84bbb208ce6d9beae6bc04ec565aa84b950f7f16d47ba25966b8b', 'adapter.py': 'b1d6e194d11f5e84c659d415989f199867fe3e1be3dc4eafd91c52c07a694cf8', 'test_adapter.py': '26e3e56242f92f5c88ceda2b9eb8feed39cb1eb11b462839f80dc8cd3c17664b'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "planning_kept_index",
+          "argv": [
+            "git",
+            "diff",
+            "--cached",
+            "--exit-code"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "research_plan",
+      "prompt": "Теперь поручаю ограниченное исследование контракта storekit 2.4. Составь план с R1: определить фактический вызов, результат и смысл ошибки по локальной vendor/api.md, которая будет предоставлена исполнителю; R2: реализовать адаптер только после результата R1. Сейчас исследования и реализации не выполняй; верни полный план.",
+      "checks": [
+        {
+          "id": "fixture_files_unchanged",
+          "argv": [
+            "python3",
+            "-c",
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '0dd990a0b6327c3e3a23f56a867b0c9796bf2379189e0e73239432860791e853', 'vendor/VERSION': '59c27b56b6c84bbb208ce6d9beae6bc04ec565aa84b950f7f16d47ba25966b8b', 'adapter.py': 'b1d6e194d11f5e84c659d415989f199867fe3e1be3dc4eafd91c52c07a694cf8', 'test_adapter.py': '26e3e56242f92f5c88ceda2b9eb8feed39cb1eb11b462839f80dc8cd3c17664b'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "planning_kept_index",
+          "argv": [
+            "git",
+            "diff",
+            "--cached",
+            "--exit-code"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "research_execute",
+      "prompt": "Выполни только исследовательский R1 следующего плана. Локальная vendor/api.md уже предоставлена. Результат сообщи в ответе; R2 не назначен.\n\n{previous_output}",
+      "setup": [
+        {
+          "id": "supply_reference",
+          "argv": [
+            "python3",
+            "-c",
+            "from pathlib import Path\nPath(\"vendor/api.md\").write_text('Storekit 2.4 local reference\\nThe synchronous method is client.persist(*, record_key: str, value: bytes).\\nIt returns SaveReceipt with integer attribute revision.\\nPersist replaces the value for that key atomically.\\nTransientStoreError means the outcome must be reconciled with client.lookup(record_key); retry is not automatically safe.\\n')"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    }
+  ]
+}

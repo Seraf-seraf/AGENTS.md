@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "analyze-16",
+  "title": "Изоляция в существующих эндпоинтах",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 16,
+    "line_start": 31,
+    "line_end": 31,
+    "condition": "Существующие эндпоинты нарушают изоляцию данных, новых модулей нет"
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-16",
+  "prompt": "Проведи ревью текущих эндпоинтов api.py на соответствие контракту README. Новых модулей здесь нет. Нужны подтверждённые ошибки и минимальные исправления, без правок.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': 'a83774ba5a62561db442023460d5839864eb655c1468b00986b9e947e5ea4513', 'api.py': 'e54f299c920b5e24beda1812540f968345d2d57c268c18c3deb4ad06aaf64756', 'test_api.py': 'd88e22831ed8be75b7d0502984602f4f717f6e4e6473e48bae882113dc492619', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Не исключает проверку доступа из ревью только потому, что новых модулей нет."
+      },
+      {
+        "id": "c2",
+        "expectation": "Подтверждает утечку чужих rows в list_documents и attachment в download_attachment достижимым cross-tenant сценарием."
+      },
+      {
+        "id": "c3",
+        "expectation": "Не объявляет корректный get_document дефектным; предлагает минимальную согласованную проверку scope и разрешающих/запрещающих случаев."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

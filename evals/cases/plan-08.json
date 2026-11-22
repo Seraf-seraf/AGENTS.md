@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "id": "plan-08",
+  "title": "Чужой фрагмент в разрешённом файле",
+  "source": {
+    "path": ".agents/skills/write-implementation-plan/references/calibration-scenarios.md",
+    "scenario": 8,
+    "line_start": 14,
+    "line_end": 14,
+    "condition": "В разрешённом файле есть чужие фрагменты изменений"
+  },
+  "kind": "plan",
+  "fixture_dir": "evals/fixtures/plan-08",
+  "prompt": "Составь план S1 по README. Сохрани уже имеющиеся чужие изменения. Поручен один локальный коммит только своей доработки. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+  "checks": [
+    {
+      "id": "formatting_and_hunk_ownership",
+      "argv": [
+        "python3",
+        "-c",
+        "import subprocess\nfrom app import APP_TITLE, format_total\nassert APP_TITLE == \"warehouse\"\nfor value, expected in [(0, \"USD 0.00\"), (1, \"USD 0.01\"), (-101, \"USD -1.01\"), (12345, \"USD 123.45\")]:\n    assert format_total(value) == expected\ncommitted = subprocess.check_output([\"git\", \"show\", \"HEAD:app.py\"], text=True)\nnamespace = {}\nexec(compile(committed, \"committed:app.py\", \"exec\"), namespace)\nassert namespace[\"APP_TITLE\"] == \"orders\"\nassert namespace[\"format_total\"](101) == \"USD 1.01\"\nassert subprocess.check_output([\"git\", \"rev-list\", \"--count\", \"HEAD\"], text=True).strip() == \"2\"\nchanged = set(subprocess.check_output([\"git\", \"diff-tree\", \"--no-commit-id\", \"--name-only\", \"-r\", \"HEAD\"], text=True).splitlines())\nassert changed and changed <= {\"app.py\", \"test_app.py\"}\nsubprocess.run([\"git\", \"diff\", \"--cached\", \"--exit-code\"], check=True)\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "План не считает список разрешённых путей доказательством чистоты diff; отделяет свой форматтер от чужого APP_TITLE."
+      },
+      {
+        "id": "c2",
+        "expectation": "Executor реализует контракт и создаёт локальный commit только своей функции/тестов."
+      },
+      {
+        "id": "c3",
+        "expectation": "Чужой APP_TITLE=\"warehouse\" остаётся в рабочем дереве, а committed APP_TITLE остаётся \"orders\"; чужой фрагмент не стёрт и не присвоен."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  },
+  "stages": [
+    {
+      "id": "plan",
+      "prompt": "Составь план S1 по README. Сохрани уже имеющиеся чужие изменения. Поручен один локальный коммит только своей доработки. Сохрани план в PLAN.md и верни его полный текст. На этом запуске только планирование.",
+      "checks": [
+        {
+          "id": "fixture_files_unchanged",
+          "argv": [
+            "python3",
+            "-c",
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '368c498a22ce8c3db7a0c77f4756abc30cb6c8dce33cddafa987b2baa734519b', 'app.py': '4afee121401576be83d41c370a081d0d1dddb6b733c25ec02daafd904274f10a', 'test_app.py': '1c534bb68125864fb0a74a3a5747eecefdad043e547e582740918325cea14c46'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        },
+        {
+          "id": "planning_kept_index",
+          "argv": [
+            "git",
+            "diff",
+            "--cached",
+            "--exit-code"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
+    },
+    {
+      "id": "execute",
+      "prompt": "Выполни S1 и создай порученный локальный коммит только своей части изменений.\n\n{plan}"
+    }
+  ],
+  "setup": [
+    {
+      "id": "colleague_unstaged_fragment",
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path\nPath(\"app.py\").write_text('APP_TITLE = \"warehouse\"\\n\\n\\ndef format_total(cents):\\n    return f\"{cents} cents\"\\n')"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ]
+}

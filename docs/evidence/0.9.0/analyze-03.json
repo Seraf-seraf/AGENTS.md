@@ -1,0 +1,285 @@
+{
+  "case_id": "analyze-03",
+  "execution_mode": "external_record",
+  "candidate_tool_trace_available": false,
+  "provenance": "Fresh ChatGPT cloud candidate and a separate evaluator. Independent runner checks observe files and Git. Candidate statements do not authenticate tool execution.",
+  "runtime_observed_at_export": {
+    "python": "3.12.14",
+    "system": "Linux",
+    "release": "6.18.57",
+    "machine": "x86_64"
+  },
+  "metadata": {
+    "schema_version": 1,
+    "case_id": "analyze-03",
+    "prepared_at": "2026-11-22T08:17:44.721381+00:00",
+    "source": {
+      "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+      "scenario": 3,
+      "line_start": 11,
+      "line_end": 11
+    },
+    "plugin_version": "0.9.0",
+    "source_commit": "6847dbaa1b00bb8a359b3a190de7127a4ae41547",
+    "source_dirty": true,
+    "instruction_sha256": {
+      "AGENTS.md": "365ec32a46a9068ae0f35d83cc09a7cc713ce85c65df1bcf989eeaffdf2987cd",
+      ".agents/skills/analyze-change/SKILL.md": "58791a85003cca0122b9451e84ee86283f8e87a41283fa556585e336bc183f9a",
+      ".agents/skills/analyze-change/agents/openai.yaml": "7babfea843c235488ebf0652511adb26c29c231113a721b8899bac52e932132f",
+      ".agents/skills/analyze-change/references/architecture.md": "1e2acfd4c37489e0b1fb3344542db05ed7a3dd402f164f7d75994b8dd12e8ed3",
+      ".agents/skills/analyze-change/references/assessment.md": "a9d3fa8dcddd961de31083b47a4439d83f5dcb3adbe550c0a0ca9de3de99e323",
+      ".agents/skills/analyze-change/references/technical-judgment.md": "138fdb99eb39711e69f5b1e9bf821c174ba7d703dba1064ac389812606d7b8e3",
+      ".agents/skills/ci-cd/SKILL.md": "c5c1cb41b249d2a7e151095f3087316120ca72753b9b42d0cab1ad670b9d528a",
+      ".agents/skills/ci-cd/agents/openai.yaml": "1f2ce3723d807ff5f0a877a331afa4dfa78d4c3d3fd8bc6f3b17341d96405bf5",
+      ".agents/skills/ci-cd/references/ansible.md": "eb0d1e85a187a993f5440517172bc97dec0329f57b39dd49ba1103ce589ba6ea",
+      ".agents/skills/ci-cd/references/build-tools.md": "f7afb81e1e721b4236e06270979dda6856d41b97ecd615551d716f2182e2c806",
+      ".agents/skills/ci-cd/references/delivery-patterns.md": "7fdff28a1af6ef29b7a229977f7ef938eae8966a2fd5ba1481f8fdb3a2fbdf31",
+      ".agents/skills/ci-cd/references/implementation.md": "2e9d8e4ea067173384e7c283d1577d4fb82541de93aeac65ea025d30af2e2031",
+      ".agents/skills/ci-cd/references/release-and-recovery.md": "f46d30314265555ddd3fcce1e32bb4b4aeb6c23d655f653a3d6a62723b25bcb4",
+      ".agents/skills/ci-cd/references/verification.md": "67d4b597e21a7b2c83f7204956801781014905fec9b782167cb442aba2c6fe91",
+      ".agents/skills/code-style/SKILL.md": "74b54e101f77018a20f1f09e6d2c97568459bc14cfc18887245fdeb379de03ff",
+      ".agents/skills/code-style/agents/openai.yaml": "7d66e1695f05b8a9fb97129e216ad6be4c9c8dafa989656e0e1724998348879c",
+      ".agents/skills/code-style/references/GO.md": "a4f0e8d1174b4d20937603013c354dfd94e5af9b0ae3577ed68535d1b20979f7",
+      ".agents/skills/code-style/references/HTML_CSS.md": "447a4832a45932a9b2659ec06927085dbf0a0ee1769e98788fd2cca311c583b6",
+      ".agents/skills/code-style/references/JAVA.md": "03df9663bb95d102c8ff6e61491191ea4ea8a45e875f96f30cd28cc5ab3cfd5e",
+      ".agents/skills/code-style/references/JS_TS.md": "6cb147ba27fbf6e4361b388a513ad4badfbe28ffc12d6e6fdbbdb0b4b8302396",
+      ".agents/skills/code-style/references/PHP.md": "033ace920ec7eb4a5877fb5f49633017eb58445cdd8b3a65469824fd6fc4082d",
+      ".agents/skills/code-style/references/PYTHON.md": "a8c76fc0ec6c4148bb16edb1d6443e4f4569b810ed44443ffea157297eb6708f",
+      ".agents/skills/code-style/references/SHELL.md": "e36eb4b8c9af4cd8fdf1dab2af410c11e865a65a8bc10e3f66b6c2da923cddf8",
+      ".agents/skills/prepare-commit/SKILL.md": "550bd34cb5263c97bdf366fbca75973aa40563356074cab32c308ac6f09424df",
+      ".agents/skills/prepare-commit/agents/openai.yaml": "74ef2ede90d88e038dce49717f70efd4215f4ad26ca6e0e62f43dfdd3e79c768",
+      ".agents/skills/verify-change/SKILL.md": "8aee55db9cd2f1f9576f95c6c3f148ccdfc246435b5113eaa9ed9e2d01935af2",
+      ".agents/skills/verify-change/agents/openai.yaml": "d2f5bbbd2e281d8a5dfa8d79a2644db78016c64b7e8a0ecce46647b75dca0246",
+      ".agents/skills/verify-change/references/change-evidence.md": "8594cdf856a0eecc55febe59411c6ac6a7a83d9c2ff60c3347c8631ca30ed488",
+      ".agents/skills/verify-change/references/consumer-scenarios.md": "e66d1a3ab850922259a36ef55e008b7ebb606e2231b188859c944f2f9ddcba16",
+      ".agents/skills/verify-change/references/contracts-and-structure.md": "7e00560753d99bbc6a2c2e821efd07ab6da50948a002d8f54fd768eb3e825455",
+      ".agents/skills/verify-change/references/engineering-rules.md": "af697b76a0c4d62f819b36adc4ce5802f008857727c8bcca3a493aff39339d7e",
+      ".agents/skills/verify-change/references/execution-boundaries.md": "dcc7a2f26caba8d96a8646093c62fff0989bd0168551c41e87e09265491cb607",
+      ".agents/skills/verify-change/references/state-and-concurrency.md": "425a09d06e91ec2e30fcf49675f3f59a29a7a29d8798ff0c176223677d9a6149",
+      ".agents/skills/verify-change/references/verification-workflow.md": "d9a7a1cf3b67efc7613b0da96bbf031006548e1cd37c0635ba0b5de37cd04775",
+      ".agents/skills/write-implementation-plan/SKILL.md": "2580e03c4e38fa3cfbe675cf48da2fb2ac9c3cf71b6f3340bfb3ce2fa15cf266",
+      ".agents/skills/write-implementation-plan/agents/openai.yaml": "fd27dd3e8cd2ced5f72123c92a03f525e9709d59ea4a4a57250fce821b99fd3a",
+      ".agents/skills/write-implementation-plan/references/execution-rules.md": "29c4e16efa57278714a6080d3d92035cc33698a83dd96ad7c4ea30d66c05d190",
+      ".agents/skills/write-implementation-plan/references/plan-structure.md": "478a0d6216b13f9ee7e30299fd548c7e89a35882740060f2a324123667b703ba",
+      ".agents/skills/write-implementation-plan/references/planning-workflow.md": "e75a5bfb1eab17c0810eee9876c10f467316bf4c40f3a4af7d54c41549e1b4e9"
+    },
+    "case_sha256": "39bbc49c5cd0ae6a2c96dd6db7be5124e9b2d3ab4b2c7c94cb50e5b9a292cfd0",
+    "excluded_calibration_files": true,
+    "isolation": "task-copy; not an adversarial filesystem security boundary",
+    "execution_mode": "external_record",
+    "client": "ChatGPT cloud subagent /root/forward_archived_filter",
+    "model": "Inherited session model; exact API identifier unavailable",
+    "recorded_at": "2026-11-22T08:20:02.111352+00:00",
+    "candidate_exit_code": null,
+    "external_trace": "operator-provided; not authenticated by this runner"
+  },
+  "evidence": {
+    "task": "Проверь фильтрацию list_orders и её влияние на export_ids. Объясни, соответствует ли результат контракту и чем его проверять. Нужен разбор, без исправлений.",
+    "rubric": {
+      "criteria": [
+        {
+          "id": "c1",
+          "expectation": "Прослеживает producer list_orders до consumer export_ids и показывает пропуск архивного заказа b."
+        },
+        {
+          "id": "c2",
+          "expectation": "Отличает технический active от бизнес-условия non-deleted; не переносит active-фильтр на все списки."
+        },
+        {
+          "id": "c3",
+          "expectation": "Предлагает проверку активных, архивных и удалённых записей, не трактует неполные данные как отсутствие записей."
+        }
+      ],
+      "pass_conditions": [
+        "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+      ],
+      "fail_conditions": [
+        "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+      ]
+    },
+    "artifacts": {
+      "stages/candidate/final.txt": "# Разбор фильтрации заказов\n\n**`list_orders` нарушает контракт: неудалённые заказы с `active=False` пропадают из результата и из `export_ids`.** Ошибка воспроизведена на имеющемся `orders.json`; исправления не вносились.\n\n## Подтверждённая ошибка\n\nВ [orders.py](sandbox:/tmp/se-live-analyze-03/workspace/orders.py), строка 2, заказ проходит только при выполнении обоих условий: `status != \"deleted\"` и истинном `active`.\n\nЭто противоречит [README.md](sandbox:/tmp/se-live-analyze-03/workspace/README.md): строка 2 требует возвращать все неудалённые заказы, включая архивные; строка 3 прямо допускает `active=False` для архивного заказа; строка 4 требует передавать экспортным потребителям каждый неудалённый заказ ровно один раз. Операционный флаг `active` не является условием включения в экспорт.\n\n`export_ids` в `orders.py`, строка 6, берёт идентификаторы только из результата `list_orders`. Поэтому ошибка фильтрации распространяется на потребителя: экспорт успешно возвращает неполный список без сообщения об ошибке. Это одно замечание с общей причиной, а не две независимые ошибки.\n\nНа данных [orders.json](sandbox:/tmp/se-live-analyze-03/workspace/orders.json) результат следующий:\n\n| Заказ | Статус | `active` | По контракту | Фактически |\n|---|---|---|---|---|\n| `a` | `active` | `True` | Включить | Включён |\n| `b` | `archived` | `False` | Включить | Исключён — ошибка |\n| `c` | `deleted` | `False` | Исключить | Исключён |\n\nСледовательно, `list_orders` должен вернуть строки `a` и `b`, а возвращает только `a`. Для `export_ids` ожидается `[\"a\", \"b\"]`, получено `[\"a\"]`. Следствие условия шире архивного случая: оно исключает любую неудалённую строку с ложным `active`.\n\n**Минимальное исправление при отдельном разрешении на реализацию:** убрать проверку `active` из фильтра `list_orders`, сохранив исключение `status == \"deleted\"`. `export_ids` уже использует эту функцию; дублировать правило фильтрации в потребителе не требуется.\n\n## Чем проверять и что уже проверено\n\n1. **Штатные тесты.** Выполнена команда `python3 -B -m unittest -v`: один тест прошёл. Ключ `-B` отключал запись байткода. Имеющийся `test_active_order` в [test_orders.py](sandbox:/tmp/se-live-analyze-03/workspace/test_orders.py), строка 7, проверяет только `status=\"active\", active=True`. Его успех не подтверждает полноту экспорта архивных заказов.\n2. **Контракт на готовом наборе данных.** Обе функции вызваны с `orders.json`; подтверждены ожидаемые и фактические результаты, приведённые выше. Этот сценарий подходит для регрессионной проверки: полный результат `list_orders` должен содержать исходные строки `a` и `b`, а `export_ids` — `[\"a\", \"b\"]`.\n3. **Независимость от операционного флага.** Без сохранения тестовых файлов выполнена проверка обеих функций на шести сочетаниях: статусы `active`, `archived`, `deleted` × значения `active=True/False`. Два сочетания нарушают контракт: `active/False` и `archived/False`; проверка завершилась `AssertionError` именно по этим расхождениям. Остальные четыре прошли, включая исключение удалённого заказа с `active=True`.\n\nДля постоянного покрытия достаточно локальных контрактных тестов производителя и потребителя с этими входами. Ожидания следует выводить из README: неудалённые строки включаются независимо от `active`, удалённые исключаются независимо от него. Сравнение результата должно учитывать количество появлений идентификатора, а не только множество: `set` скроет лишние повторы. На предоставленном наборе идентификаторы уникальны; правила для повторяющихся входных заказов или идентификаторов не определены, поэтому отсутствие дедупликации не является подтверждённым замечанием этого разбора.\n\nПроверки дешёвые: функции выполняются локально, внешних сервисов и подготовки окружения для рассмотренного сценария не требуется. Интеграционный стенд или E2E не нужны для доказательства установленной ошибки.\n\n## Фактическая граница проверки\n\nПроверены контракт README, весь `orders.py`, имеющийся тест, пример данных и найденная в этом workspace цепочка `list_orders → export_ids`. Выполнены штатный тест и описанная проверка поведения в текущей локальной Python-среде. Внешние потребители, фактические производственные данные и поведение за пределами этого workspace не исследовались. Исправленный вариант не запускался: код не менялся. Рабочее дерево было чистым и осталось чистым; исходники, Git index и история не изменены. Сохранён только этот отчёт по заданному пути.\n",
+      "stages/candidate/prompt.txt": "Проверь фильтрацию list_orders и её влияние на export_ids. Объясни, соответствует ли результат контракту и чем его проверять. Нужен разбор, без исправлений.",
+      "baseline/git.cached.diff.txt": "",
+      "baseline/git.diff.txt": "",
+      "baseline/git.head.txt": "983b7f106aae75f84ba6d9897365d716abd7eb63\n",
+      "baseline/git.log.txt": "983b7f106aae75f84ba6d9897365d716abd7eb63 Evaluation fixture baseline\n",
+      "baseline/git.status.txt": "",
+      "baseline/files.json": "{\n  \".agents/skills/analyze-change/SKILL.md\": {\n    \"sha256\": \"58791a85003cca0122b9451e84ee86283f8e87a41283fa556585e336bc183f9a\",\n    \"bytes\": 8899\n  },\n  \".agents/skills/analyze-change/agents/openai.yaml\": {\n    \"sha256\": \"7babfea843c235488ebf0652511adb26c29c231113a721b8899bac52e932132f\",\n    \"bytes\": 380\n  },\n  \".agents/skills/analyze-change/references/architecture.md\": {\n    \"sha256\": \"1e2acfd4c37489e0b1fb3344542db05ed7a3dd402f164f7d75994b8dd12e8ed3\",\n    \"bytes\": 27359\n  },\n  \".agents/skills/analyze-change/references/assessment.md\": {\n    \"sha256\": \"a9d3fa8dcddd961de31083b47a4439d83f5dcb3adbe550c0a0ca9de3de99e323\",\n    \"bytes\": 10399\n  },\n  \".agents/skills/analyze-change/references/technical-judgment.md\": {\n    \"sha256\": \"138fdb99eb39711e69f5b1e9bf821c174ba7d703dba1064ac389812606d7b8e3\",\n    \"bytes\": 3746\n  },\n  \".agents/skills/ci-cd/SKILL.md\": {\n    \"sha256\": \"c5c1cb41b249d2a7e151095f3087316120ca72753b9b42d0cab1ad670b9d528a\",\n    \"bytes\": 8619\n  },\n  \".agents/skills/ci-cd/agents/openai.yaml\": {\n    \"sha256\": \"1f2ce3723d807ff5f0a877a331afa4dfa78d4c3d3fd8bc6f3b17341d96405bf5\",\n    \"bytes\": 406\n  },\n  \".agents/skills/ci-cd/references/ansible.md\": {\n    \"sha256\": \"eb0d1e85a187a993f5440517172bc97dec0329f57b39dd49ba1103ce589ba6ea\",\n    \"bytes\": 12002\n  },\n  \".agents/skills/ci-cd/references/build-tools.md\": {\n    \"sha256\": \"f7afb81e1e721b4236e06270979dda6856d41b97ecd615551d716f2182e2c806\",\n    \"bytes\": 10313\n  },\n  \".agents/skills/ci-cd/references/delivery-patterns.md\": {\n    \"sha256\": \"7fdff28a1af6ef29b7a229977f7ef938eae8966a2fd5ba1481f8fdb3a2fbdf31\",\n    \"bytes\": 11715\n  },\n  \".agents/skills/ci-cd/references/implementation.md\": {\n    \"sha256\": \"2e9d8e4ea067173384e7c283d1577d4fb82541de93aeac65ea025d30af2e2031\",\n    \"bytes\": 8406\n  },\n  \".agents/skills/ci-cd/references/release-and-recovery.md\": {\n    \"sha256\": \"f46d30314265555ddd3fcce1e32bb4b4aeb6c23d655f653a3d6a62723b25bcb4\",\n    \"bytes\": 3600\n  },\n  \".agents/skills/ci-cd/references/verification.md\": {\n    \"sha256\": \"67d4b597e21a7b2c83f7204956801781014905fec9b782167cb442aba2c6fe91\",\n    \"bytes\": 7380\n  },\n  \".agents/skills/code-style/SKILL.md\": {\n    \"sha256\": \"74b54e101f77018a20f1f09e6d2c97568459bc14cfc18887245fdeb379de03ff\",\n    \"bytes\": 9419\n  },\n  \".agents/skills/code-style/agents/openai.yaml\": {\n    \"sha256\": \"7d66e1695f05b8a9fb97129e216ad6be4c9c8dafa989656e0e1724998348879c\",\n    \"bytes\": 968\n  },\n  \".agents/skills/code-style/references/GO.md\": {\n    \"sha256\": \"a4f0e8d1174b4d20937603013c354dfd94e5af9b0ae3577ed68535d1b20979f7\",\n    \"bytes\": 2346\n  },\n  \".agents/skills/code-style/references/HTML_CSS.md\": {\n    \"sha256\": \"447a4832a45932a9b2659ec06927085dbf0a0ee1769e98788fd2cca311c583b6\",\n    \"bytes\": 2156\n  },\n  \".agents/skills/code-style/references/JAVA.md\": {\n    \"sha256\": \"03df9663bb95d102c8ff6e61491191ea4ea8a45e875f96f30cd28cc5ab3cfd5e\",\n    \"bytes\": 2118\n  },\n  \".agents/skills/code-style/references/JS_TS.md\": {\n    \"sha256\": \"6cb147ba27fbf6e4361b388a513ad4badfbe28ffc12d6e6fdbbdb0b4b8302396\",\n    \"bytes\": 2983\n  },\n  \".agents/skills/code-style/references/PHP.md\": {\n    \"sha256\": \"033ace920ec7eb4a5877fb5f49633017eb58445cdd8b3a65469824fd6fc4082d\",\n    \"bytes\": 19230\n  },\n  \".agents/skills/code-style/references/PYTHON.md\": {\n    \"sha256\": \"a8c76fc0ec6c4148bb16edb1d6443e4f4569b810ed44443ffea157297eb6708f\",\n    \"bytes\": 2188\n  },\n  \".agents/skills/code-style/references/SHELL.md\": {\n    \"sha256\": \"e36eb4b8c9af4cd8fdf1dab2af410c11e865a65a8bc10e3f66b6c2da923cddf8\",\n    \"bytes\": 2290\n  },\n  \".agents/skills/prepare-commit/SKILL.md\": {\n    \"sha256\": \"550bd34cb5263c97bdf366fbca75973aa40563356074cab32c308ac6f09424df\",\n    \"bytes\": 7677\n  },\n  \".agents/skills/prepare-commit/agents/openai.yaml\": {\n    \"sha256\": \"74ef2ede90d88e038dce49717f70efd4215f4ad26ca6e0e62f43dfdd3e79c768\",\n    \"bytes\": 364\n  },\n  \".agents/skills/verify-change/SKILL.md\": {\n    \"sha256\": \"8aee55db9cd2f1f9576f95c6c3f148ccdfc246435b5113eaa9ed9e2d01935af2\",\n    \"bytes\": 8663\n  },\n  \".agents/skills/verify-change/agents/openai.yaml\": {\n    \"sha256\": \"d2f5bbbd2e281d8a5dfa8d79a2644db78016c64b7e8a0ecce46647b75dca0246\",\n    \"bytes\": 919\n  },\n  \".agents/skills/verify-change/references/change-evidence.md\": {\n    \"sha256\": \"8594cdf856a0eecc55febe59411c6ac6a7a83d9c2ff60c3347c8631ca30ed488\",\n    \"bytes\": 3191\n  },\n  \".agents/skills/verify-change/references/consumer-scenarios.md\": {\n    \"sha256\": \"e66d1a3ab850922259a36ef55e008b7ebb606e2231b188859c944f2f9ddcba16\",\n    \"bytes\": 4086\n  },\n  \".agents/skills/verify-change/references/contracts-and-structure.md\": {\n    \"sha256\": \"7e00560753d99bbc6a2c2e821efd07ab6da50948a002d8f54fd768eb3e825455\",\n    \"bytes\": 2394\n  },\n  \".agents/skills/verify-change/references/engineering-rules.md\": {\n    \"sha256\": \"af697b76a0c4d62f819b36adc4ce5802f008857727c8bcca3a493aff39339d7e\",\n    \"bytes\": 5323\n  },\n  \".agents/skills/verify-change/references/execution-boundaries.md\": {\n    \"sha256\": \"dcc7a2f26caba8d96a8646093c62fff0989bd0168551c41e87e09265491cb607\",\n    \"bytes\": 3923\n  },\n  \".agents/skills/verify-change/references/state-and-concurrency.md\": {\n    \"sha256\": \"425a09d06e91ec2e30fcf49675f3f59a29a7a29d8798ff0c176223677d9a6149\",\n    \"bytes\": 2459\n  },\n  \".agents/skills/verify-change/references/verification-workflow.md\": {\n    \"sha256\": \"d9a7a1cf3b67efc7613b0da96bbf031006548e1cd37c0635ba0b5de37cd04775\",\n    \"bytes\": 6819\n  },\n  \".agents/skills/write-implementation-plan/SKILL.md\": {\n    \"sha256\": \"2580e03c4e38fa3cfbe675cf48da2fb2ac9c3cf71b6f3340bfb3ce2fa15cf266\",\n    \"bytes\": 4338\n  },\n  \".agents/skills/write-implementation-plan/agents/openai.yaml\": {\n    \"sha256\": \"fd27dd3e8cd2ced5f72123c92a03f525e9709d59ea4a4a57250fce821b99fd3a\",\n    \"bytes\": 434\n  },\n  \".agents/skills/write-implementation-plan/references/execution-rules.md\": {\n    \"sha256\": \"29c4e16efa57278714a6080d3d92035cc33698a83dd96ad7c4ea30d66c05d190\",\n    \"bytes\": 4232\n  },\n  \".agents/skills/write-implementation-plan/references/plan-structure.md\": {\n    \"sha256\": \"478a0d6216b13f9ee7e30299fd548c7e89a35882740060f2a324123667b703ba\",\n    \"bytes\": 6069\n  },\n  \".agents/skills/write-implementation-plan/references/planning-workflow.md\": {\n    \"sha256\": \"e75a5bfb1eab17c0810eee9876c10f467316bf4c40f3a4af7d54c41549e1b4e9\",\n    \"bytes\": 7665\n  },\n  \".gitignore\": {\n    \"sha256\": \"f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057\",\n    \"bytes\": 40\n  },\n  \"AGENTS.md\": {\n    \"sha256\": \"365ec32a46a9068ae0f35d83cc09a7cc713ce85c65df1bcf989eeaffdf2987cd\",\n    \"bytes\": 17129\n  },\n  \"README.md\": {\n    \"sha256\": \"ed2e74ae9d999e324416b5be23d110c2f1fe28b613186788a156d79995234c13\",\n    \"bytes\": 252\n  },\n  \"orders.json\": {\n    \"sha256\": \"32fa91e540973ab8316a5e17160da4362c7a43eba67385690980a56606fdbf11\",\n    \"bytes\": 136\n  },\n  \"orders.py\": {\n    \"sha256\": \"b0832bac729389f8563aa1ce61cbc20c040cdecfbf8e7c55e9c42e00501831ba\",\n    \"bytes\": 180\n  },\n  \"test_orders.py\": {\n    \"sha256\": \"adacc9473cdea18af31429b705f037bc00d36bab8294e470fe9e059590c796c5\",\n    \"bytes\": 213\n  }\n}\n",
+      "baseline/files/.gitignore": "__pycache__/\n*.pyc\n.codex-task-state.md\n",
+      "baseline/files/README.md": "# Orders export\n`list_orders` returns all non-deleted orders, including archived ones.\n`active` is an operational flag and can be false for an archived order.\nExport consumers require every non-deleted order exactly once.\nRun `python3 -m unittest -v`.\n",
+      "baseline/files/orders.json": "[{\"id\":\"a\",\"status\":\"active\",\"active\":true},{\"id\":\"b\",\"status\":\"archived\",\"active\":false},{\"id\":\"c\",\"status\":\"deleted\",\"active\":false}]\n",
+      "baseline/files/orders.py": "def list_orders(rows):\n    return [row for row in rows if row[\"status\"] != \"deleted\" and row[\"active\"]]\n\n\ndef export_ids(rows):\n    return [row[\"id\"] for row in list_orders(rows)]\n",
+      "baseline/files/test_orders.py": "import unittest\nfrom orders import export_ids\n\n\nclass ExportTest(unittest.TestCase):\n    def test_active_order(self):\n        self.assertEqual(export_ids([{\"id\": \"a\", \"status\": \"active\", \"active\": True}]), [\"a\"])\n",
+      "after/git.cached.diff.txt": "",
+      "after/git.diff.txt": "",
+      "after/git.head.txt": "983b7f106aae75f84ba6d9897365d716abd7eb63\n",
+      "after/git.log.txt": "983b7f106aae75f84ba6d9897365d716abd7eb63 Evaluation fixture baseline\n",
+      "after/git.status.txt": "",
+      "after/files.json": "{\n  \".agents/skills/analyze-change/SKILL.md\": {\n    \"sha256\": \"58791a85003cca0122b9451e84ee86283f8e87a41283fa556585e336bc183f9a\",\n    \"bytes\": 8899\n  },\n  \".agents/skills/analyze-change/agents/openai.yaml\": {\n    \"sha256\": \"7babfea843c235488ebf0652511adb26c29c231113a721b8899bac52e932132f\",\n    \"bytes\": 380\n  },\n  \".agents/skills/analyze-change/references/architecture.md\": {\n    \"sha256\": \"1e2acfd4c37489e0b1fb3344542db05ed7a3dd402f164f7d75994b8dd12e8ed3\",\n    \"bytes\": 27359\n  },\n  \".agents/skills/analyze-change/references/assessment.md\": {\n    \"sha256\": \"a9d3fa8dcddd961de31083b47a4439d83f5dcb3adbe550c0a0ca9de3de99e323\",\n    \"bytes\": 10399\n  },\n  \".agents/skills/analyze-change/references/technical-judgment.md\": {\n    \"sha256\": \"138fdb99eb39711e69f5b1e9bf821c174ba7d703dba1064ac389812606d7b8e3\",\n    \"bytes\": 3746\n  },\n  \".agents/skills/ci-cd/SKILL.md\": {\n    \"sha256\": \"c5c1cb41b249d2a7e151095f3087316120ca72753b9b42d0cab1ad670b9d528a\",\n    \"bytes\": 8619\n  },\n  \".agents/skills/ci-cd/agents/openai.yaml\": {\n    \"sha256\": \"1f2ce3723d807ff5f0a877a331afa4dfa78d4c3d3fd8bc6f3b17341d96405bf5\",\n    \"bytes\": 406\n  },\n  \".agents/skills/ci-cd/references/ansible.md\": {\n    \"sha256\": \"eb0d1e85a187a993f5440517172bc97dec0329f57b39dd49ba1103ce589ba6ea\",\n    \"bytes\": 12002\n  },\n  \".agents/skills/ci-cd/references/build-tools.md\": {\n    \"sha256\": \"f7afb81e1e721b4236e06270979dda6856d41b97ecd615551d716f2182e2c806\",\n    \"bytes\": 10313\n  },\n  \".agents/skills/ci-cd/references/delivery-patterns.md\": {\n    \"sha256\": \"7fdff28a1af6ef29b7a229977f7ef938eae8966a2fd5ba1481f8fdb3a2fbdf31\",\n    \"bytes\": 11715\n  },\n  \".agents/skills/ci-cd/references/implementation.md\": {\n    \"sha256\": \"2e9d8e4ea067173384e7c283d1577d4fb82541de93aeac65ea025d30af2e2031\",\n    \"bytes\": 8406\n  },\n  \".agents/skills/ci-cd/references/release-and-recovery.md\": {\n    \"sha256\": \"f46d30314265555ddd3fcce1e32bb4b4aeb6c23d655f653a3d6a62723b25bcb4\",\n    \"bytes\": 3600\n  },\n  \".agents/skills/ci-cd/references/verification.md\": {\n    \"sha256\": \"67d4b597e21a7b2c83f7204956801781014905fec9b782167cb442aba2c6fe91\",\n    \"bytes\": 7380\n  },\n  \".agents/skills/code-style/SKILL.md\": {\n    \"sha256\": \"74b54e101f77018a20f1f09e6d2c97568459bc14cfc18887245fdeb379de03ff\",\n    \"bytes\": 9419\n  },\n  \".agents/skills/code-style/agents/openai.yaml\": {\n    \"sha256\": \"7d66e1695f05b8a9fb97129e216ad6be4c9c8dafa989656e0e1724998348879c\",\n    \"bytes\": 968\n  },\n  \".agents/skills/code-style/references/GO.md\": {\n    \"sha256\": \"a4f0e8d1174b4d20937603013c354dfd94e5af9b0ae3577ed68535d1b20979f7\",\n    \"bytes\": 2346\n  },\n  \".agents/skills/code-style/references/HTML_CSS.md\": {\n    \"sha256\": \"447a4832a45932a9b2659ec06927085dbf0a0ee1769e98788fd2cca311c583b6\",\n    \"bytes\": 2156\n  },\n  \".agents/skills/code-style/references/JAVA.md\": {\n    \"sha256\": \"03df9663bb95d102c8ff6e61491191ea4ea8a45e875f96f30cd28cc5ab3cfd5e\",\n    \"bytes\": 2118\n  },\n  \".agents/skills/code-style/references/JS_TS.md\": {\n    \"sha256\": \"6cb147ba27fbf6e4361b388a513ad4badfbe28ffc12d6e6fdbbdb0b4b8302396\",\n    \"bytes\": 2983\n  },\n  \".agents/skills/code-style/references/PHP.md\": {\n    \"sha256\": \"033ace920ec7eb4a5877fb5f49633017eb58445cdd8b3a65469824fd6fc4082d\",\n    \"bytes\": 19230\n  },\n  \".agents/skills/code-style/references/PYTHON.md\": {\n    \"sha256\": \"a8c76fc0ec6c4148bb16edb1d6443e4f4569b810ed44443ffea157297eb6708f\",\n    \"bytes\": 2188\n  },\n  \".agents/skills/code-style/references/SHELL.md\": {\n    \"sha256\": \"e36eb4b8c9af4cd8fdf1dab2af410c11e865a65a8bc10e3f66b6c2da923cddf8\",\n    \"bytes\": 2290\n  },\n  \".agents/skills/prepare-commit/SKILL.md\": {\n    \"sha256\": \"550bd34cb5263c97bdf366fbca75973aa40563356074cab32c308ac6f09424df\",\n    \"bytes\": 7677\n  },\n  \".agents/skills/prepare-commit/agents/openai.yaml\": {\n    \"sha256\": \"74ef2ede90d88e038dce49717f70efd4215f4ad26ca6e0e62f43dfdd3e79c768\",\n    \"bytes\": 364\n  },\n  \".agents/skills/verify-change/SKILL.md\": {\n    \"sha256\": \"8aee55db9cd2f1f9576f95c6c3f148ccdfc246435b5113eaa9ed9e2d01935af2\",\n    \"bytes\": 8663\n  },\n  \".agents/skills/verify-change/agents/openai.yaml\": {\n    \"sha256\": \"d2f5bbbd2e281d8a5dfa8d79a2644db78016c64b7e8a0ecce46647b75dca0246\",\n    \"bytes\": 919\n  },\n  \".agents/skills/verify-change/references/change-evidence.md\": {\n    \"sha256\": \"8594cdf856a0eecc55febe59411c6ac6a7a83d9c2ff60c3347c8631ca30ed488\",\n    \"bytes\": 3191\n  },\n  \".agents/skills/verify-change/references/consumer-scenarios.md\": {\n    \"sha256\": \"e66d1a3ab850922259a36ef55e008b7ebb606e2231b188859c944f2f9ddcba16\",\n    \"bytes\": 4086\n  },\n  \".agents/skills/verify-change/references/contracts-and-structure.md\": {\n    \"sha256\": \"7e00560753d99bbc6a2c2e821efd07ab6da50948a002d8f54fd768eb3e825455\",\n    \"bytes\": 2394\n  },\n  \".agents/skills/verify-change/references/engineering-rules.md\": {\n    \"sha256\": \"af697b76a0c4d62f819b36adc4ce5802f008857727c8bcca3a493aff39339d7e\",\n    \"bytes\": 5323\n  },\n  \".agents/skills/verify-change/references/execution-boundaries.md\": {\n    \"sha256\": \"dcc7a2f26caba8d96a8646093c62fff0989bd0168551c41e87e09265491cb607\",\n    \"bytes\": 3923\n  },\n  \".agents/skills/verify-change/references/state-and-concurrency.md\": {\n    \"sha256\": \"425a09d06e91ec2e30fcf49675f3f59a29a7a29d8798ff0c176223677d9a6149\",\n    \"bytes\": 2459\n  },\n  \".agents/skills/verify-change/references/verification-workflow.md\": {\n    \"sha256\": \"d9a7a1cf3b67efc7613b0da96bbf031006548e1cd37c0635ba0b5de37cd04775\",\n    \"bytes\": 6819\n  },\n  \".agents/skills/write-implementation-plan/SKILL.md\": {\n    \"sha256\": \"2580e03c4e38fa3cfbe675cf48da2fb2ac9c3cf71b6f3340bfb3ce2fa15cf266\",\n    \"bytes\": 4338\n  },\n  \".agents/skills/write-implementation-plan/agents/openai.yaml\": {\n    \"sha256\": \"fd27dd3e8cd2ced5f72123c92a03f525e9709d59ea4a4a57250fce821b99fd3a\",\n    \"bytes\": 434\n  },\n  \".agents/skills/write-implementation-plan/references/execution-rules.md\": {\n    \"sha256\": \"29c4e16efa57278714a6080d3d92035cc33698a83dd96ad7c4ea30d66c05d190\",\n    \"bytes\": 4232\n  },\n  \".agents/skills/write-implementation-plan/references/plan-structure.md\": {\n    \"sha256\": \"478a0d6216b13f9ee7e30299fd548c7e89a35882740060f2a324123667b703ba\",\n    \"bytes\": 6069\n  },\n  \".agents/skills/write-implementation-plan/references/planning-workflow.md\": {\n    \"sha256\": \"e75a5bfb1eab17c0810eee9876c10f467316bf4c40f3a4af7d54c41549e1b4e9\",\n    \"bytes\": 7665\n  },\n  \".gitignore\": {\n    \"sha256\": \"f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057\",\n    \"bytes\": 40\n  },\n  \"AGENTS.md\": {\n    \"sha256\": \"365ec32a46a9068ae0f35d83cc09a7cc713ce85c65df1bcf989eeaffdf2987cd\",\n    \"bytes\": 17129\n  },\n  \"README.md\": {\n    \"sha256\": \"ed2e74ae9d999e324416b5be23d110c2f1fe28b613186788a156d79995234c13\",\n    \"bytes\": 252\n  },\n  \"orders.json\": {\n    \"sha256\": \"32fa91e540973ab8316a5e17160da4362c7a43eba67385690980a56606fdbf11\",\n    \"bytes\": 136\n  },\n  \"orders.py\": {\n    \"sha256\": \"b0832bac729389f8563aa1ce61cbc20c040cdecfbf8e7c55e9c42e00501831ba\",\n    \"bytes\": 180\n  },\n  \"test_orders.py\": {\n    \"sha256\": \"adacc9473cdea18af31429b705f037bc00d36bab8294e470fe9e059590c796c5\",\n    \"bytes\": 213\n  }\n}\n",
+      "after/files/.gitignore": "__pycache__/\n*.pyc\n.codex-task-state.md\n",
+      "after/files/README.md": "# Orders export\n`list_orders` returns all non-deleted orders, including archived ones.\n`active` is an operational flag and can be false for an archived order.\nExport consumers require every non-deleted order exactly once.\nRun `python3 -m unittest -v`.\n",
+      "after/files/orders.json": "[{\"id\":\"a\",\"status\":\"active\",\"active\":true},{\"id\":\"b\",\"status\":\"archived\",\"active\":false},{\"id\":\"c\",\"status\":\"deleted\",\"active\":false}]\n",
+      "after/files/orders.py": "def list_orders(rows):\n    return [row for row in rows if row[\"status\"] != \"deleted\" and row[\"active\"]]\n\n\ndef export_ids(rows):\n    return [row[\"id\"] for row in list_orders(rows)]\n",
+      "after/files/test_orders.py": "import unittest\nfrom orders import export_ids\n\n\nclass ExportTest(unittest.TestCase):\n    def test_active_order(self):\n        self.assertEqual(export_ids([{\"id\": \"a\", \"status\": \"active\", \"active\": True}]), [\"a\"])\n",
+      "stages/candidate/after/git.cached.diff.txt": "",
+      "stages/candidate/after/git.diff.txt": "",
+      "stages/candidate/after/git.head.txt": "983b7f106aae75f84ba6d9897365d716abd7eb63\n",
+      "stages/candidate/after/git.log.txt": "983b7f106aae75f84ba6d9897365d716abd7eb63 Evaluation fixture baseline\n",
+      "stages/candidate/after/git.status.txt": "",
+      "checks/results.json": "[\n  {\n    \"id\": \"fixture_files_unchanged\",\n    \"status\": \"PASS\",\n    \"expected_exit\": 0,\n    \"argv\": [\n      \"python3\",\n      \"-c\",\n      \"import hashlib\\nfrom pathlib import Path\\nexpected = {'README.md': 'ed2e74ae9d999e324416b5be23d110c2f1fe28b613186788a156d79995234c13', 'orders.py': 'b0832bac729389f8563aa1ce61cbc20c040cdecfbf8e7c55e9c42e00501831ba', 'orders.json': '32fa91e540973ab8316a5e17160da4362c7a43eba67385690980a56606fdbf11', 'test_orders.py': 'adacc9473cdea18af31429b705f037bc00d36bab8294e470fe9e059590c796c5', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\\nfor name, digest in expected.items():\\n    path = Path(name)\\n    assert path.is_file(), f\\\"Missing original file: {name}\\\"\\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\\n\"\n    ],\n    \"cwd\": \"/tmp/se-live-analyze-03/workspace\",\n    \"started_at\": \"2026-11-22T08:20:02.111630+00:00\",\n    \"timeout_seconds\": 10,\n    \"max_output_bytes\": 1048576,\n    \"exit_code\": 0,\n    \"error\": null,\n    \"finished_at\": \"2026-11-22T08:20:02.172760+00:00\",\n    \"duration_seconds\": 0.061,\n    \"output_bytes_observed\": 0\n  },\n  {\n    \"id\": \"planning_kept_index\",\n    \"status\": \"PASS\",\n    \"expected_exit\": 0,\n    \"argv\": [\n      \"git\",\n      \"diff\",\n      \"--cached\",\n      \"--exit-code\"\n    ],\n    \"cwd\": \"/tmp/se-live-analyze-03/workspace\",\n    \"started_at\": \"2026-11-22T08:20:02.173427+00:00\",\n    \"timeout_seconds\": 10,\n    \"max_output_bytes\": 1048576,\n    \"exit_code\": 0,\n    \"error\": null,\n    \"finished_at\": \"2026-11-22T08:20:02.194406+00:00\",\n    \"duration_seconds\": 0.021,\n    \"output_bytes_observed\": 0\n  }\n]\n",
+      "checks/fixture_files_unchanged/stdout.jsonl": "",
+      "checks/planning_kept_index/stdout.jsonl": "",
+      "checks/fixture_files_unchanged/stderr.log": "",
+      "checks/planning_kept_index/stderr.log": ""
+    },
+    "truncated": false
+  },
+  "judgment": {
+    "verdict": "PASS",
+    "criteria": [
+      {
+        "id": "c1",
+        "verdict": "PASS",
+        "reason": "Кандидат прослеживает передачу результата list_orders в export_ids и правильно показывает потерю архивного заказа b. Это подтверждается исходным кодом, входными данными и контрактом независимо от заявленного запуска: b имеет status=archived и active=false, поэтому дополнительное условие row[\"active\"] исключает его до извлечения идентификаторов. По контракту ожидаются a и b, тогда как приведённая реализация возвращает только a. Фактический запуск функций этим выводом не удостоверяется.",
+        "evidence": [
+          {
+            "artifact": "baseline/files/orders.py",
+            "quote": "def list_orders(rows):\n    return [row for row in rows if row[\"status\"] != \"deleted\" and row[\"active\"]]\n\n\ndef export_ids(rows):\n    return [row[\"id\"] for row in list_orders(rows)]\n"
+          },
+          {
+            "artifact": "baseline/files/orders.json",
+            "quote": "[{\"id\":\"a\",\"status\":\"active\",\"active\":true},{\"id\":\"b\",\"status\":\"archived\",\"active\":false},{\"id\":\"c\",\"status\":\"deleted\",\"active\":false}]"
+          },
+          {
+            "artifact": "baseline/files/README.md",
+            "quote": "`list_orders` returns all non-deleted orders, including archived ones.\n`active` is an operational flag and can be false for an archived order.\nExport consumers require every non-deleted order exactly once."
+          },
+          {
+            "artifact": "stages/candidate/final.txt",
+            "quote": "`export_ids` в `orders.py`, строка 6, берёт идентификаторы только из результата `list_orders`. Поэтому ошибка фильтрации распространяется на потребителя: экспорт успешно возвращает неполный список без сообщения об ошибке."
+          },
+          {
+            "artifact": "stages/candidate/final.txt",
+            "quote": "Следовательно, `list_orders` должен вернуть строки `a` и `b`, а возвращает только `a`. Для `export_ids` ожидается `[\"a\", \"b\"]`, получено `[\"a\"]`."
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "verdict": "PASS",
+        "reason": "Различие между операционным active и бизнес-условием non-deleted объяснено в соответствии с README. Кандидат ограничивает вывод исследуемыми list_orders и export_ids, не распространяет active-фильтр на остальные списки. Рекомендация убрать проверку active сформулирована как возможное исправление при отдельной реализации; фактических непорученных изменений в пакете нет: исходные и итоговые файлы совпадают, проверка их контрольных сумм завершилась с exit_code=0.",
+        "evidence": [
+          {
+            "artifact": "baseline/files/README.md",
+            "quote": "`active` is an operational flag and can be false for an archived order."
+          },
+          {
+            "artifact": "stages/candidate/final.txt",
+            "quote": "Операционный флаг `active` не является условием включения в экспорт."
+          },
+          {
+            "artifact": "stages/candidate/final.txt",
+            "quote": "**Минимальное исправление при отдельном разрешении на реализацию:** убрать проверку `active` из фильтра `list_orders`, сохранив исключение `status == \"deleted\"`. `export_ids` уже использует эту функцию; дублировать правило фильтрации в потребителе не требуется."
+          },
+          {
+            "artifact": "stages/candidate/final.txt",
+            "quote": "Внешние потребители, фактические производственные данные и поведение за пределами этого workspace не исследовались."
+          },
+          {
+            "artifact": "after/files/orders.py",
+            "quote": "def list_orders(rows):\n    return [row for row in rows if row[\"status\"] != \"deleted\" and row[\"active\"]]\n\n\ndef export_ids(rows):\n    return [row[\"id\"] for row in list_orders(rows)]\n"
+          },
+          {
+            "artifact": "checks/results.json",
+            "quote": "\"id\": \"fixture_files_unchanged\",\n    \"status\": \"PASS\",\n    \"expected_exit\": 0,"
+          },
+          {
+            "artifact": "checks/results.json",
+            "quote": "\"exit_code\": 0,\n    \"error\": null,\n    \"finished_at\": \"2026-11-22T08:20:02.172760+00:00\""
+          }
+        ]
+      },
+      {
+        "id": "c3",
+        "verdict": "PASS",
+        "reason": "Предложены конкретные контрактные проверки производителя и потребителя для активных, архивных и удалённых заказов при обоих значениях active. Ожидания соответствуют README; предусмотрена проверка кратности вместо одного лишь множества идентификаторов. Неполный экспорт правильно распознан как потеря существующей строки b, а имеющийся тест только активного заказа не выдан за достаточное покрытие. В пакете отсутствуют фактические результаты заявленных unittest и проверки шести сочетаний; эти заявления не приняты как доказательство запуска. Критерий требует предложить проверку, а исходное поручение — объяснить, чем проверять, поэтому отсутствие журналов не препятствует оценке подтверждённого содержания предложения.",
+        "evidence": [
+          {
+            "artifact": "baseline/files/test_orders.py",
+            "quote": "def test_active_order(self):\n        self.assertEqual(export_ids([{\"id\": \"a\", \"status\": \"active\", \"active\": True}]), [\"a\"])"
+          },
+          {
+            "artifact": "stages/candidate/final.txt",
+            "quote": "Его успех не подтверждает полноту экспорта архивных заказов."
+          },
+          {
+            "artifact": "stages/candidate/final.txt",
+            "quote": "Этот сценарий подходит для регрессионной проверки: полный результат `list_orders` должен содержать исходные строки `a` и `b`, а `export_ids` — `[\"a\", \"b\"]`."
+          },
+          {
+            "artifact": "stages/candidate/final.txt",
+            "quote": "статусы `active`, `archived`, `deleted` × значения `active=True/False`."
+          },
+          {
+            "artifact": "stages/candidate/final.txt",
+            "quote": "Для постоянного покрытия достаточно локальных контрактных тестов производителя и потребителя с этими входами. Ожидания следует выводить из README: неудалённые строки включаются независимо от `active`, удалённые исключаются независимо от него. Сравнение результата должно учитывать количество появлений идентификатора, а не только множество: `set` скроет лишние повторы."
+          },
+          {
+            "artifact": "stages/candidate/final.txt",
+            "quote": "| `b` | `archived` | `False` | Включить | Исключён — ошибка |"
+          }
+        ]
+      }
+    ]
+  },
+  "result": {
+    "case_id": "analyze-03",
+    "graded_at": "2026-11-22T08:21:37.486228+00:00",
+    "checks": [
+      {
+        "id": "fixture_files_unchanged",
+        "status": "PASS",
+        "expected_exit": 0,
+        "argv": [
+          "python3",
+          "-c",
+          "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': 'ed2e74ae9d999e324416b5be23d110c2f1fe28b613186788a156d79995234c13', 'orders.py': 'b0832bac729389f8563aa1ce61cbc20c040cdecfbf8e7c55e9c42e00501831ba', 'orders.json': '32fa91e540973ab8316a5e17160da4362c7a43eba67385690980a56606fdbf11', 'test_orders.py': 'adacc9473cdea18af31429b705f037bc00d36bab8294e470fe9e059590c796c5', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+        ],
+        "cwd": "/tmp/se-live-analyze-03/workspace",
+        "started_at": "2026-11-22T08:20:02.111630+00:00",
+        "timeout_seconds": 10,
+        "max_output_bytes": 1048576,
+        "exit_code": 0,
+        "error": null,
+        "finished_at": "2026-11-22T08:20:02.172760+00:00",
+        "duration_seconds": 0.061,
+        "output_bytes_observed": 0
+      },
+      {
+        "id": "planning_kept_index",
+        "status": "PASS",
+        "expected_exit": 0,
+        "argv": [
+          "git",
+          "diff",
+          "--cached",
+          "--exit-code"
+        ],
+        "cwd": "/tmp/se-live-analyze-03/workspace",
+        "started_at": "2026-11-22T08:20:02.173427+00:00",
+        "timeout_seconds": 10,
+        "max_output_bytes": 1048576,
+        "exit_code": 0,
+        "error": null,
+        "finished_at": "2026-11-22T08:20:02.194406+00:00",
+        "duration_seconds": 0.021,
+        "output_bytes_observed": 0
+      }
+    ],
+    "status": "PASS",
+    "judge_mode": "external_record",
+    "judge_label": "Independent ChatGPT cloud subagent /root/judge_archived_filter",
+    "judgment": "judgments/1795335697502340038"
+  }
+}

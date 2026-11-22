@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "id": "analyze-14",
+  "title": "Узкий вопрос после готового анализа",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 14,
+    "line_start": 29,
+    "line_end": 29,
+    "condition": "Узкий вопрос о поле после уже выполненного анализа"
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-14",
+  "prompt": "Контекст прошлого разбора сохранён в analysis.md. Уточни только одно: если передать status=null, архивные заказы попадут в экспорт?",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'analysis.md': 'd55650d948afd507d09b36321b172d936fed30561c02067231679915480b18a8', 'orders.py': 'c0c01fc5b2a8f9916bbc96b275def7f295b84107490db7df046b52955da306ac', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Отвечает да: null убирает статусный фильтр, архивные включаются, удалённые остаются исключёнными."
+      },
+      {
+        "id": "c2",
+        "expectation": "Использует уже установленный контекст; не начинает новый полный аудит, план, реализацию или трекер."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

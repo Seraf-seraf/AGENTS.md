@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "analyze-08",
+  "title": "Дорогая миграция с недоступной приёмкой",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 8,
+    "line_start": 16,
+    "line_end": 16,
+    "condition": "Пользователь согласовал дорогую миграцию данных; обязательная интеграционная проверка недоступна в текущей среде."
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-08",
+  "prompt": "Оцени реализацию согласованной миграции из decision.md: сложность, риски, неизвестные и стоимость подтверждения. Сейчас нужен разбор, без изменения объёма и кода.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '97542e6033d538d30032db55daf656e04b6a36a4490a6adf18f9d561c6cc5cc7', 'decision.md': '3572f732458243a8992ecdeb91de6672ca9667d3ccea3fd7511700f17ab3783c', 'migration.sql': 'abd902946b2770d33e9620a43b75fd244ff50bff4918dde6f20e86b446a8369f', 'smoke.py': 'eb226fd7e14cfe1025bd1712c9959b67dd8d3578e8952d0b394ae0a1626fdfb7', 'integration.py': '1f856e86d113cd42459e1edb15eb3f4d6be218234096735381928a70909f315b'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "integration_remains_unavailable",
+      "argv": [
+        "python3",
+        "integration.py"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 78
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Сохраняет согласованный объём и выбранную последовательность миграции."
+      },
+      {
+        "id": "c2",
+        "expectation": "Раздельно оценивает реализацию, блокировки/обратимость/объём, неизвестные и недоступную интеграционную проверку."
+      },
+      {
+        "id": "c3",
+        "expectation": "Не выдаёт smoke за полную приёмку, не отменяет обязательный TEST и не предлагает production как замену."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

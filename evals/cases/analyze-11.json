@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "analyze-11",
+  "title": "Ревью готового решения без обязательных замечаний",
+  "source": {
+    "path": ".agents/skills/analyze-change/references/calibration-scenarios.md",
+    "scenario": 11,
+    "line_start": 26,
+    "line_end": 26,
+    "condition": "«Проверь готовое решение; только ошибки»"
+  },
+  "kind": "analysis",
+  "fixture_dir": "evals/fixtures/analyze-11",
+  "prompt": "Проверь готовую функцию format_cents. В ответе нужны только подтверждённые ошибки; правки не вноси.",
+  "checks": [
+    {
+      "id": "fixture_files_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '25f381972105077e6cf4efad7607268c7252b3d55ab4397a85c7096864f9327d', 'money.py': '28c5ad67a4fcc170fb766e907cc2e33006105e3e1761acd7d5ba2486a94626c5', 'test_money.py': 'fd76db1ef5eee30832fc709e543352a9927b837694df17251107ea936c113880', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "planning_kept_index",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Проверяет контракт на представительной области и не выдумывает дефект там, где корректность подтверждается кодом."
+      },
+      {
+        "id": "c2",
+        "expectation": "Не выдаёт stylistic preference, гипотетическую нагрузку или замену type(value) за ошибку контракта."
+      },
+      {
+        "id": "c3",
+        "expectation": "Допускает краткий ответ об отсутствии найденных ошибок с существенными ограничениями, без нового проекта или рекомендаций вне запроса."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены ответом, действиями и результатами проверок; формулировка может отличаться."
+    ],
+    "fail_conditions": [
+      "Выполнены непорученные изменения либо вывод противоречит доступному контракту."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}
