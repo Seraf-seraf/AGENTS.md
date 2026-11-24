@@ -18,7 +18,7 @@ description: Использовать при генерации, изменен�
 | Go: `.go` | [GO.md](references/GO.md) |
 | Python: `.py`, `.pyi`, скрипты Python | [PYTHON.md](references/PYTHON.md) |
 | Java: `.java` | [JAVA.md](references/JAVA.md) |
-| Shell: `.sh`, `.bash`, скрипты Bash | [SHELL.md](references/SHELL.md) |
+| Shell: `.sh`, `.bash` и скрипты без расширения, запускаемые оболочкой, например с `#!/bin/sh` | [SHELL.md](references/SHELL.md) |
 | HTML: `.html`, `.htm`; CSS: `.css` | [HTML_CSS.md](references/HTML_CSS.md) |
 
 В смешанном проекте читать только справочники затронутых языков. В шаблоне или компоненте с несколькими языками учитывать изменяемые фрагменты. JSX/TSX направлять в JS_TS.md, CSS-фрагменты — в HTML_CSS.md; PHP-фрагменты Blade — в PHP.md, остальные части шаблона — в соответствующие справочники. Не выдавать HTML-правила за правила JSX или правила PHP за синтаксис Blade. Справочник JS_TS.md содержит отдельные источники для обоих языков: выбирать относящиеся разделы, учитывать отличия TypeScript.
