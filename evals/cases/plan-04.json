@@ -38,6 +38,10 @@
       {
         "id": "c3",
         "expectation": "Проверяет наблюдаемый event/payload, не подменяет это подсчётом классов."
+      },
+      {
+        "id": "c4",
+        "expectation": "План выбирает режим «Только рабочее дерево» и не предписывает запись в индекс. Исполнитель оставляет изменения в рабочем дереве, индекс и HEAD сохраняются."
       }
     ],
     "pass_conditions": [
@@ -83,7 +87,21 @@
     },
     {
       "id": "execute",
-      "prompt": "Выполни назначенный этап уведомления по плану. Без коммита.\n\n{plan}"
+      "prompt": "Выполни назначенный этап уведомления по плану. Без коммита.\n\n{plan}",
+      "checks": [
+        {
+          "id": "worktree_only_preserves_index_and_head",
+          "argv": [
+            "python3",
+            "-c",
+            "from pathlib import Path\nimport subprocess\nimport sys\nbase = Path(sys.argv[1])\nhead = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True)\nassert head == (base / 'git.head.txt').read_text()\nsubprocess.run(['git', 'diff', '--cached', '--exit-code'], check=True)\n",
+            "{stage_before_dir}"
+          ],
+          "cwd": ".",
+          "timeout_seconds": 10,
+          "expected_exit": 0
+        }
+      ]
     }
   ]
 }
