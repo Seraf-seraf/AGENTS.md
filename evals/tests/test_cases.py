@@ -17,6 +17,7 @@ from runner import load_cases, validate_case, validate_cases  # noqa: E402
 
 ANALYZE_SOURCE = ".agents/skills/analyze-change/references/calibration-scenarios.md"
 PLAN_SOURCE = ".agents/skills/write-implementation-plan/references/calibration-scenarios.md"
+VERIFY_SOURCE = ".agents/skills/verify-change/references/calibration-scenarios.md"
 
 
 def run(argv, cwd, expected_exit=0):
@@ -58,15 +59,17 @@ class CaseCorpusTest(unittest.TestCase):
         cls.cases = load_cases(REPO_ROOT)
         cls.by_id = {case["id"]: case for case in cls.cases}
 
-    def test_one_case_per_original_scenario(self):
+    def test_one_case_per_calibration_scenario(self):
         expected_ids = {f"analyze-{number:02d}" for number in range(1, 17)}
         expected_ids.update(f"plan-{number:02d}" for number in range(1, 11))
+        expected_ids.update(f"verify-{number:02d}" for number in range(1, 4))
         self.assertEqual(set(self.by_id), expected_ids)
+        sources = {"analyze": ANALYZE_SOURCE, "plan": PLAN_SOURCE, "verify": VERIFY_SOURCE}
         mappings = set()
         for case in self.cases:
             with self.subTest(case=case["id"]):
                 source = case["source"]
-                expected_source = ANALYZE_SOURCE if case["id"].startswith("analyze-") else PLAN_SOURCE
+                expected_source = sources[case["id"].split("-")[0]]
                 self.assertEqual(source["path"], expected_source)
                 self.assertEqual(source["scenario"], int(case["id"].split("-")[1]))
                 key = (source["path"], source["scenario"])
@@ -126,9 +129,9 @@ class CaseCorpusTest(unittest.TestCase):
                 # The complete hidden criterion is never installed as fixture content.
                 for path in (REPO_ROOT / case["fixture_dir"]).rglob("*"):
                     if path.is_file():
-                        content = path.read_text()
+                        content = path.read_bytes()
                         for criterion in criteria:
-                            self.assertNotIn(criterion["expectation"], content)
+                            self.assertNotIn(criterion["expectation"].encode("utf-8"), content)
 
     def test_readonly_cases_accept_baseline_and_reject_source_edits(self):
         for case_id in ["analyze-03", "analyze-16"]:

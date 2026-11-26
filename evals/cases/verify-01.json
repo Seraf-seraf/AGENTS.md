@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "id": "verify-01",
+  "title": "Независимое требование при ошибочном существующем тесте",
+  "source": {
+    "path": ".agents/skills/verify-change/references/calibration-scenarios.md",
+    "scenario": 1,
+    "line_start": 7,
+    "line_end": 7,
+    "condition": "Существующий зелёный тест противоречит действующему требованию."
+  },
+  "kind": "execution",
+  "fixture_dir": "evals/fixtures/verify-01",
+  "prompt": "Проверь реализацию окна доступности по контракту README. Исправь подтверждённые несоответствия и добавь необходимые регрессионные проверки. Сохрани публичный интерфейс и действующие требования. Сообщи, что установлено и какие проверки выполнены. Коммит и отдельный план не нужны.",
+  "checks": [
+    {
+      "id": "window_contract",
+      "argv": [
+        "python3",
+        "-c",
+        "from availability import is_open\nfor starts_at, ends_at in [(10, 20), (-8, -3), (41, 42), (1000, 2000)]:\n    samples = [\n        (starts_at - 1, False),\n        (starts_at, True),\n        (ends_at - 1, True),\n        (ends_at, False),\n        (ends_at + 1, False),\n    ]\n    for now, expected in samples:\n        actual = is_open(starts_at, ends_at, now)\n        assert actual is expected, (starts_at, ends_at, now, actual, expected)\n        assert is_open(starts_at, ends_at, now, cancelled=True) is False\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "project_tests",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-v"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "requirements_unchanged",
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib\nfrom pathlib import Path\nassert hashlib.sha256(Path(\"README.md\").read_bytes()).hexdigest() == 'c8f6e2fbff537658c4639261c385dd9c8237b4dd4cfe849a942c8efea854d2ee'\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "independent_expectation",
+        "expectation": "Выводит исключительную правую границу из действующего README и обнаруживает, что существующий test_at_end подтверждает ошибку реализации. Зелёный исходный набор не использует как основание сохранить это поведение."
+      },
+      {
+        "id": "behavior_and_regression",
+        "expectation": "Исправляет поведение при now == ends_at и неверное ожидание существующего теста; сохраняет или усиливает проверку этой границы вместо удаления, отключения или ослабления теста. Не меняет требование под реализацию."
+      },
+      {
+        "id": "preserved_contract",
+        "expectation": "Сохраняет включительное начало, недоступность вне окна и при cancelled=True, публичный интерфейс и независимость от системных часов."
+      },
+      {
+        "id": "observed_verification",
+        "expectation": "Проверяет границу по независимому ожиданию, запускает относящиеся проверки после исправления и сообщает фактические результаты. Различает старое ошибочное ожидание и правильный регрессионный тест; не приписывает себе прогоны скрытых проверок."
+      }
+    ],
+    "pass_conditions": [
+      "Все критерии подтверждены ответом, изменениями и наблюдаемыми проверками; конкретная структура исправления и формулировки не предписаны."
+    ],
+    "fail_conditions": [
+      "Сохранено ошибочное ожидание теста, ослаблено требование либо регрессионная проверка удалена ради зелёного результата."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}

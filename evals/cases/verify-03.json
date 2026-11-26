@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "id": "verify-03",
+  "title": "Повтор операции после временного отказа",
+  "source": {
+    "path": ".agents/skills/verify-change/references/calibration-scenarios.md",
+    "scenario": 3,
+    "line_start": 9,
+    "line_end": 9,
+    "condition": "После временного отказа обещано повторное действие, но сохранённое состояние блокирует его."
+  },
+  "kind": "execution",
+  "fixture_dir": "evals/fixtures/verify-03",
+  "prompt": "Проверь SubmissionService по контракту README. Исправь подтверждённые несоответствия и проверь результат штатными тестами и необходимыми дополнительными сценариями. Сохрани публичный API. Коммит и отдельный план не нужны.",
+  "checks": [
+    {
+      "id": "retry_contract",
+      "argv": [
+        "python3",
+        "-c",
+        "from pathlib import Path\nimport tempfile\nfrom submission import PermanentFailure, SubmissionService, TemporaryFailure\n\nclass Dependency:\n    def __init__(self, *outcomes):\n        self.outcomes = list(outcomes)\n        self.calls = []\n        self.effects = []\n\n    def __call__(self, key):\n        self.calls.append(key)\n        assert self.outcomes, \"unexpected dependency call\"\n        outcome = self.outcomes.pop(0)\n        if outcome == \"temporary\":\n            raise TemporaryFailure()\n        if outcome == \"permanent\":\n            raise PermanentFailure()\n        self.effects.append(key)\n        return outcome\n\nretryable = {\"status\": \"retryable\", \"receipt\": None}\npermanent = {\"status\": \"permanent\", \"receipt\": None}\nwith tempfile.TemporaryDirectory() as directory:\n    database = Path(directory) / \"submissions.sqlite3\"\n\n    unavailable = Dependency(\"temporary\", \"temporary\")\n    assert SubmissionService(database, unavailable).submit(\"recover\") == retryable\n    assert unavailable.calls == [\"recover\", \"recover\"]\n    assert unavailable.effects == []\n\n    recovered = Dependency(\"receipt-recovered\")\n    actual = SubmissionService(database, recovered).submit(\"recover\")\n    assert actual == {\"status\": \"succeeded\", \"receipt\": \"receipt-recovered\"}, (\n        \"retryable must permit the next client call after recovery\", actual\n    )\n    assert recovered.calls == [\"recover\"]\n    assert recovered.effects == [\"recover\"]\n\n    cached = Dependency()\n    assert SubmissionService(database, cached).submit(\"recover\") == actual\n    assert cached.calls == [], \"a completed operation must not be sent twice\"\n\n    for unused_round in range(2):\n        unavailable_again = Dependency(\"temporary\", \"temporary\")\n        assert SubmissionService(database, unavailable_again).submit(\"later\") == retryable\n        assert unavailable_again.calls == [\"later\", \"later\"]\n        assert unavailable_again.effects == []\n    later = Dependency(\"temporary\", \"receipt-later\")\n    assert SubmissionService(database, later).submit(\"later\") == {\n        \"status\": \"succeeded\", \"receipt\": \"receipt-later\"\n    }\n    assert later.calls == [\"later\", \"later\"]\n    assert later.effects == [\"later\"]\n\n    rejected = Dependency(\"permanent\")\n    assert SubmissionService(database, rejected).submit(\"rejected\") == permanent\n    assert rejected.calls == [\"rejected\"]\n    assert rejected.effects == []\n    after_rejection = Dependency()\n    assert SubmissionService(database, after_rejection).submit(\"rejected\") == permanent\n    assert after_rejection.calls == [], \"a permanent result is terminal\"\n\n    independent = Dependency(\"receipt-independent\")\n    assert SubmissionService(database, independent).submit(\"independent\") == {\n        \"status\": \"succeeded\", \"receipt\": \"receipt-independent\"\n    }\n    assert independent.calls == [\"independent\"]\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "existing_tests",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-v"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "no_unrequested_commit",
+      "argv": [
+        "python3",
+        "-c",
+        "import subprocess\nassert subprocess.check_output([\"git\", \"rev-list\", \"--count\", \"HEAD\"], text=True).strip() == \"1\"\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Устанавливает по контракту и воспроизведению, что исчерпание бюджета одного вызова сохраняется как запрет следующего клиентского повтора; не объявляет зелёные штатные тесты доказательством возможности восстановления."
+      },
+      {
+        "id": "c2",
+        "expectation": "Исправляет поведение и проверяет последовательность временных отказов, сохранение retryable, пересоздание сервиса с тем же хранилищем и успешный следующий вызов после восстановления зависимости."
+      },
+      {
+        "id": "c3",
+        "expectation": "Сохраняет максимум две попытки на каждый клиентский вызов, отдельный бюджет последующего вызова, идемпотентность успеха, окончательность permanent и независимость ключей; не привязывает решение к внутренней схеме счётчика."
+      },
+      {
+        "id": "c4",
+        "expectation": "Добавляет полезное регрессионное покрытие через публичный API с реальным сохранённым состоянием, сообщает фактически выполненные проверки и не делает непорученный коммит."
+      }
+    ],
+    "pass_conditions": [
+      "Независимые проверки проходят, а ответ и наблюдаемые действия подтверждают причину сбоя и проверенное продолжение операции после него."
+    ],
+    "fail_conditions": [
+      "Обещан повтор, но после сохранения состояния и создания нового экземпляра он не достигает зависимости.",
+      "Лимит попыток снят, успешный эффект повторяется или постоянный отказ превращён во временный.",
+      "Контракт либо ожидания изменены так, чтобы объявить блокировку допустимым поведением."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 240,
+    "max_output_bytes": 200000
+  }
+}
