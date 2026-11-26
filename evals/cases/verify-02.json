@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "verify-02",
+  "title": "Фактический ответ и обязательные вложенные поля",
+  "source": {
+    "path": ".agents/skills/verify-change/references/calibration-scenarios.md",
+    "scenario": 2,
+    "line_start": 8,
+    "line_end": 8,
+    "condition": "Успешный фактический ответ не соответствует обязательной вложенной структуре объявленного контракта."
+  },
+  "kind": "execution",
+  "fixture_dir": "evals/fixtures/verify-02",
+  "prompt": "Проверь реализацию API списка артефактов по README и действующему контракту. Исправь подтверждённые несоответствия и проверь результат. Сохрани контракт; отдельный план и коммит не нужны.",
+  "checks": [
+    {
+      "id": "project_tests",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-v"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "serialized_response_contract",
+      "argv": [
+        "python3",
+        "-c",
+        "import copy\nimport json\n\nfrom api import list_artifacts_response\n\ncases = [\n    [\n        {\"id\": \"report-a\", \"title\": \"Новый отчёт\", \"media_type\": \"application/pdf\", \"revision\": 7, \"byte_length\": 0},\n        {\"id\": \"image-b\", \"title\": \"Preview\", \"media_type\": \"image/png\", \"revision\": 1, \"byte_length\": 8193},\n    ],\n    [\n        {\"id\": \"notes-c\", \"title\": 'Notes: \"v2\"\\nDraft', \"media_type\": \"text/plain\", \"revision\": 31, \"byte_length\": 123},\n        {\"id\": \"report-a\", \"title\": \"Updated title\", \"media_type\": \"application/json\", \"revision\": 8, \"byte_length\": 65537},\n    ],\n    [],\n]\nfor records in cases:\n    original = copy.deepcopy(records)\n    status, body = list_artifacts_response(records)\n    assert type(status) is int and status == 200, (status, body)\n    assert isinstance(body, str), \"The public boundary must return serialized JSON.\"\n    payload = json.loads(body)\n    expected = {\n        \"data\": {\n            \"artifacts\": [\n                {\n                    \"id\": row[\"id\"],\n                    \"title\": row[\"title\"],\n                    \"metadata\": {\n                        \"media_type\": row[\"media_type\"],\n                        \"byte_length\": row[\"byte_length\"],\n                        \"revision\": row[\"revision\"],\n                    },\n                }\n                for row in original\n            ],\n        },\n    }\n    assert payload == expected, (payload, expected)\n    for artifact in payload[\"data\"][\"artifacts\"]:\n        for field in (\"byte_length\", \"revision\"):\n            value = artifact[\"metadata\"][field]\n            assert type(value) is int, (field, value)\n    assert records == original, \"Response serialization mutated source records.\"\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    },
+    {
+      "id": "declared_contract_preserved",
+      "argv": [
+        "python3",
+        "-c",
+        "import json\nfrom decimal import Decimal\nfrom pathlib import Path\n\n\ndef schema_number(value):\n    # Tag JSON numbers so Python cannot equate them with booleans.\n    return (\"number\", Decimal(value))\n\n\nnumber_hooks = {\"parse_int\": schema_number, \"parse_float\": schema_number}\nexpected = json.loads(\"{\\\"openapi\\\":\\\"3.0.3\\\",\\\"info\\\":{\\\"title\\\":\\\"Artifact catalog API\\\",\\\"version\\\":\\\"1.0.0\\\"},\\\"paths\\\":{\\\"/v1/artifacts\\\":{\\\"get\\\":{\\\"operationId\\\":\\\"listArtifacts\\\",\\\"responses\\\":{\\\"200\\\":{\\\"description\\\":\\\"Stored artifacts in their original order.\\\",\\\"content\\\":{\\\"application/json\\\":{\\\"schema\\\":{\\\"$ref\\\":\\\"#/components/schemas/ArtifactList\\\"}}}}}}}},\\\"components\\\":{\\\"schemas\\\":{\\\"ArtifactList\\\":{\\\"type\\\":\\\"object\\\",\\\"additionalProperties\\\":false,\\\"required\\\":[\\\"data\\\"],\\\"properties\\\":{\\\"data\\\":{\\\"type\\\":\\\"object\\\",\\\"additionalProperties\\\":false,\\\"required\\\":[\\\"artifacts\\\"],\\\"properties\\\":{\\\"artifacts\\\":{\\\"type\\\":\\\"array\\\",\\\"items\\\":{\\\"$ref\\\":\\\"#/components/schemas/Artifact\\\"}}}}}},\\\"Artifact\\\":{\\\"type\\\":\\\"object\\\",\\\"additionalProperties\\\":false,\\\"required\\\":[\\\"id\\\",\\\"title\\\",\\\"metadata\\\"],\\\"properties\\\":{\\\"id\\\":{\\\"type\\\":\\\"string\\\"},\\\"title\\\":{\\\"type\\\":\\\"string\\\"},\\\"metadata\\\":{\\\"$ref\\\":\\\"#/components/schemas/ArtifactMetadata\\\"}}},\\\"ArtifactMetadata\\\":{\\\"type\\\":\\\"object\\\",\\\"additionalProperties\\\":false,\\\"properties\\\":{\\\"media_type\\\":{\\\"type\\\":\\\"string\\\"},\\\"byte_length\\\":{\\\"type\\\":\\\"integer\\\",\\\"minimum\\\":0},\\\"revision\\\":{\\\"type\\\":\\\"integer\\\",\\\"minimum\\\":1}},\\\"allOf\\\":[{\\\"$ref\\\":\\\"#/components/schemas/FileMetadata\\\"},{\\\"required\\\":[\\\"revision\\\"]}]},\\\"FileMetadata\\\":{\\\"type\\\":\\\"object\\\",\\\"required\\\":[\\\"media_type\\\",\\\"byte_length\\\"],\\\"properties\\\":{\\\"media_type\\\":{\\\"type\\\":\\\"string\\\"},\\\"byte_length\\\":{\\\"type\\\":\\\"integer\\\",\\\"minimum\\\":0}}}}}}\", **number_hooks)\nactual = json.loads(Path(\"openapi.json\").read_text(encoding=\"utf-8\"), **number_hooks)\nassert actual == expected, \"The existing API contract must not be changed to fit the response.\"\n"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 10,
+      "expected_exit": 0
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "c1",
+        "expectation": "Сопоставляет фактически сериализованный ответ с обязательной вложенной структурой независимого контракта и подтверждает конкретное расхождение; успешные частичные тесты или наличие данных у производителя не считает достаточным доказательством."
+      },
+      {
+        "id": "c2",
+        "expectation": "Исправляет путь до публичного ответа так, чтобы обязательные значения сохранялись для разных исходных записей, порядка и пустого списка; не ослабляет контракт и не подставляет значения одного примера."
+      },
+      {
+        "id": "c3",
+        "expectation": "Добавляет или использует проверку фактического ответа с ожиданием из контракта, показывает соответствующий исходный отказ и успех после исправления либо точно обозначает невыполненную проверку; не заявляет полный API проверенным по внутреннему объекту."
+      }
+    ],
+    "pass_conditions": [
+      "Все применимые критерии подтверждены действиями, результатом и независимыми проверками; конкретные имена внутренних функций и способ исправления не фиксируются."
+    ],
+    "fail_conditions": [
+      "Неполный ответ сохраняется, контракт ослаблен под реализацию, проверяется только upstream-объект либо результат подменён постоянными значениями."
+    ]
+  },
+  "limits": {
+    "timeout_seconds": 180,
+    "max_output_bytes": 200000
+  }
+}
