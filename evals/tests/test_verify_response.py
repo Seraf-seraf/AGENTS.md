@@ -126,6 +126,26 @@ class ResponseOracleTest(unittest.TestCase):
             path.write_text(json.dumps(json.loads(path.read_text())))
             self.assert_check_passes(root, "declared_contract_preserved")
 
+    def test_guard_rejects_boolean_numeric_constraint(self):
+        with workspace(self.case) as root:
+            path = root / "openapi.json"
+            contract = json.loads(path.read_text())
+            properties = contract["components"]["schemas"]["FileMetadata"]["properties"]
+            properties["byte_length"]["minimum"] = False
+            path.write_text(json.dumps(contract))
+            guard = self.check_result(root, "declared_contract_preserved")
+            self.assertNotEqual(guard.returncode, 0)
+            self.assertIn("AssertionError", guard.stderr)
+
+    def test_guard_accepts_equivalent_numeric_constraint(self):
+        with workspace(self.case) as root:
+            path = root / "openapi.json"
+            contract = json.loads(path.read_text())
+            properties = contract["components"]["schemas"]["FileMetadata"]["properties"]
+            properties["byte_length"]["minimum"] = 0.0
+            path.write_text(json.dumps(contract))
+            self.assert_check_passes(root, "declared_contract_preserved")
+
     def test_hardcoded_sample_passes_smoke_but_fails_independent_inputs(self):
         with workspace(self.case) as root:
             (root / "api.py").write_text(HARDCODED_RESPONSE)
