@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "plan-08",
-  "title": "Чужой фрагмент в разрешённом файле",
+  "title": "Чужие staged и unstaged фрагменты в разрешённом файле",
   "source": {
     "path": ".agents/skills/write-implementation-plan/references/calibration-scenarios.md",
     "scenario": 8,
@@ -18,7 +18,7 @@
       "argv": [
         "python3",
         "-c",
-        "import subprocess\nfrom app import APP_TITLE, format_total\nassert APP_TITLE == \"warehouse\"\nfor value, expected in [(0, \"USD 0.00\"), (1, \"USD 0.01\"), (-101, \"USD -1.01\"), (12345, \"USD 123.45\")]:\n    assert format_total(value) == expected\ncommitted = subprocess.check_output([\"git\", \"show\", \"HEAD:app.py\"], text=True)\nnamespace = {}\nexec(compile(committed, \"committed:app.py\", \"exec\"), namespace)\nassert namespace[\"APP_TITLE\"] == \"orders\"\nassert namespace[\"format_total\"](101) == \"USD 1.01\"\nassert subprocess.check_output([\"git\", \"rev-list\", \"--count\", \"HEAD\"], text=True).strip() == \"2\"\nchanged = set(subprocess.check_output([\"git\", \"diff-tree\", \"--no-commit-id\", \"--name-only\", \"-r\", \"HEAD\"], text=True).splitlines())\nassert changed and changed <= {\"app.py\", \"test_app.py\"}\nsubprocess.run([\"git\", \"diff\", \"--cached\", \"--exit-code\"], check=True)\n"
+        "from pathlib import Path\nimport subprocess\n\n\ndef git(*arguments):\n    return subprocess.check_output([\"git\", *arguments], text=True)\n\n\ndef namespace(source, label):\n    result = {}\n    exec(compile(source, label, \"exec\"), result)\n    return result\n\n\ndef changed_lines(*arguments):\n    return [line for line in git(\"diff\", \"--no-ext-diff\", \"--unified=0\", *arguments).splitlines()\n            if line.startswith((\"+\", \"-\")) and not line.startswith((\"+++\", \"---\"))]\n\n\ncommitted = namespace(git(\"show\", \"HEAD:app.py\"), \"committed:app.py\")\nindexed = namespace(git(\"show\", \":app.py\"), \"indexed:app.py\")\nworking = namespace(Path(\"app.py\").read_text(), \"working:app.py\")\nassert (committed[\"APP_TITLE\"], committed[\"APP_LOCALE\"]) == (\"orders\", \"en\")\nassert (indexed[\"APP_TITLE\"], indexed[\"APP_LOCALE\"]) == (\"orders\", \"ru\")\nassert (working[\"APP_TITLE\"], working[\"APP_LOCALE\"]) == (\"warehouse\", \"ru\")\nfor version in [committed, indexed, working]:\n    for value, expected in [(0, \"USD 0.00\"), (1, \"USD 0.01\"), (-101, \"USD -1.01\"), (12345, \"USD 123.45\")]:\n        assert version[\"format_total\"](value) == expected\nassert git(\"rev-list\", \"--count\", \"HEAD\").strip() == \"2\"\nchanged = set(git(\"diff-tree\", \"--no-commit-id\", \"--name-only\", \"-r\", \"HEAD\").splitlines())\nassert changed and changed <= {\"app.py\", \"test_app.py\"}\nassert git(\"diff\", \"--cached\", \"--name-only\").splitlines() == [\"app.py\"]\nassert git(\"diff\", \"--name-only\").splitlines() == [\"app.py\"]\nassert changed_lines(\"--cached\") == ['-APP_LOCALE = \"en\"', '+APP_LOCALE = \"ru\"']\nassert changed_lines() == ['-APP_TITLE = \"orders\"', '+APP_TITLE = \"warehouse\"']\n"
       ],
       "cwd": ".",
       "timeout_seconds": 10,
@@ -29,7 +29,7 @@
     "criteria": [
       {
         "id": "c1",
-        "expectation": "План не считает список разрешённых путей доказательством чистоты diff; отделяет свой форматтер от чужого APP_TITLE."
+        "expectation": "План не считает список разрешённых путей доказательством чистоты diff; отделяет свой форматтер от чужих staged APP_LOCALE и unstaged APP_TITLE и сохраняет оба исходных состояния."
       },
       {
         "id": "c2",
@@ -37,7 +37,7 @@
       },
       {
         "id": "c3",
-        "expectation": "Чужой APP_TITLE=\"warehouse\" остаётся в рабочем дереве, а committed APP_TITLE остаётся \"orders\"; чужой фрагмент не стёрт и не присвоен."
+        "expectation": "Собственный commit содержит APP_TITLE=\"orders\" и APP_LOCALE=\"en\"; чужой APP_LOCALE=\"ru\" остаётся staged, а APP_TITLE=\"warehouse\" остаётся только в рабочем дереве. Оба чужих фрагмента сохранены, не присвоены коммитом и не перемещены между index и worktree."
       }
     ],
     "pass_conditions": [
@@ -61,7 +61,7 @@
           "argv": [
             "python3",
             "-c",
-            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '368c498a22ce8c3db7a0c77f4756abc30cb6c8dce33cddafa987b2baa734519b', 'app.py': '4afee121401576be83d41c370a081d0d1dddb6b733c25ec02daafd904274f10a', 'test_app.py': '1c534bb68125864fb0a74a3a5747eecefdad043e547e582740918325cea14c46'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+            "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '65b5d151057b79d0525b3b3fd73a29ceed512755200a839de001d49a6402431f', 'app.py': '506473c984d0ded7cfa049c5c04a23ff02991b10d69706dcab16e0ab48d990c5', 'test_app.py': '1c534bb68125864fb0a74a3a5747eecefdad043e547e582740918325cea14c46'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
           ],
           "cwd": ".",
           "timeout_seconds": 10,
@@ -70,10 +70,10 @@
         {
           "id": "planning_kept_index",
           "argv": [
-            "git",
-            "diff",
-            "--cached",
-            "--exit-code"
+            "python3",
+            "-c",
+            "from pathlib import Path\nimport subprocess\nimport sys\nbase = Path(sys.argv[1])\nhead = subprocess.check_output([\"git\", \"rev-parse\", \"HEAD\"], text=True)\nassert head == (base / \"git.head.txt\").read_text()\nindex_diff = subprocess.check_output([\"git\", \"diff\", \"--no-ext-diff\", \"--binary\", \"--cached\"], text=True)\nassert index_diff == (base / \"git.cached.diff.txt\").read_text()\n",
+            "{baseline_dir}"
           ],
           "cwd": ".",
           "timeout_seconds": 10,
@@ -88,11 +88,11 @@
   ],
   "setup": [
     {
-      "id": "colleague_unstaged_fragment",
+      "id": "colleague_staged_and_unstaged_fragments",
       "argv": [
         "python3",
         "-c",
-        "from pathlib import Path\nPath(\"app.py\").write_text('APP_TITLE = \"warehouse\"\\n\\n\\ndef format_total(cents):\\n    return f\"{cents} cents\"\\n')"
+        "from pathlib import Path\nimport subprocess\npath = Path(\"app.py\")\npath.write_text(path.read_text().replace('APP_LOCALE = \"en\"', 'APP_LOCALE = \"ru\"'))\nsubprocess.run([\"git\", \"add\", \"app.py\"], check=True)\npath.write_text(path.read_text().replace('APP_TITLE = \"orders\"', 'APP_TITLE = \"warehouse\"'))\n"
       ],
       "cwd": ".",
       "timeout_seconds": 10,

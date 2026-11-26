@@ -181,28 +181,80 @@ class CaseCorpusTest(unittest.TestCase):
             self.assertNotEqual(result_for(check, root).returncode, 0)
 
     def test_mixed_file_oracle_distinguishes_own_commit_from_whole_file(self):
+        from runner import snapshot
+
         case = self.by_id["plan-08"]
         check = case["checks"][0]
         own_version = (
-            'APP_TITLE = "orders"\n\n\n'
+            'APP_TITLE = "orders"\n'
+            'APP_LOCALE = "en"\n\n\n'
             'def format_total(cents):\n'
             '    sign = "-" if cents < 0 else ""\n'
             '    major, minor = divmod(abs(cents), 100)\n'
             '    return f"USD {sign}{major}.{minor:02d}"\n'
         )
-        for include_foreign_fragment in [False, True]:
-            with self.subTest(include_foreign=include_foreign_fragment), workspace(case) as root:
-                working_version = own_version.replace('"orders"', '"warehouse"')
-                (root / "app.py").write_text(working_version)
-                indexed_version = working_version if include_foreign_fragment else own_version
-                blob = subprocess.run(
-                    ["git", "hash-object", "-w", "--stdin"], cwd=root,
-                    input=indexed_version, text=True, capture_output=True, check=True,
-                ).stdout.strip()
-                run(["git", "update-index", "--cacheinfo", f"100644,{blob},app.py"], root)
+        indexed_version = own_version.replace('"en"', '"ru"')
+        working_version = indexed_version.replace('"orders"', '"warehouse"')
+        variants = {
+            "preserved": (own_version, indexed_version, working_version),
+            "commit_staged": (indexed_version, indexed_version, working_version),
+            "erase_staged": (
+                own_version, own_version, working_version.replace('"ru"', '"en"'),
+            ),
+            "unstage_foreign": (own_version, own_version, working_version),
+            "commit_unstaged": (
+                own_version.replace('"orders"', '"warehouse"'), working_version, working_version,
+            ),
+            "erase_unstaged": (own_version, indexed_version, indexed_version),
+            "stage_foreign_unstaged": (own_version, working_version, working_version),
+            "commit_whole_file": (working_version, working_version, working_version),
+        }
+
+        def write_index(root, content):
+            blob = subprocess.run(
+                ["git", "hash-object", "-w", "--stdin"], cwd=root,
+                input=content, text=True, capture_output=True, check=True,
+            ).stdout.strip()
+            run(["git", "update-index", "--cacheinfo", f"100644,{blob},app.py"], root)
+
+        for variant, (committed, indexed, working) in variants.items():
+            with self.subTest(variant=variant), workspace(case) as root:
+                for setup in case["setup"]:
+                    result = result_for(setup, root)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                head = run(["git", "show", "HEAD:app.py"], root).stdout
+                initial_index = run(["git", "show", ":app.py"], root).stdout
+                initial_working = (root / "app.py").read_text()
+                self.assertIn('APP_TITLE = "orders"', head)
+                self.assertIn('APP_LOCALE = "en"', head)
+                self.assertIn('APP_TITLE = "orders"', initial_index)
+                self.assertIn('APP_LOCALE = "ru"', initial_index)
+                self.assertIn('APP_TITLE = "warehouse"', initial_working)
+                self.assertIn('APP_LOCALE = "ru"', initial_working)
+
+                baseline = root.parent / "baseline"
+                snapshot(root, baseline)
+                planning_checks = copy.deepcopy(case["stages"][0]["checks"])
+                for planning_check in planning_checks:
+                    planning_check["argv"] = [
+                        argument.replace("{baseline_dir}", str(baseline))
+                        for argument in planning_check["argv"]
+                    ]
+                    result = result_for(planning_check, root)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                index_check = next(
+                    item for item in planning_checks if item["id"] == "planning_kept_index"
+                )
+                write_index(root, head)
+                self.assertNotEqual(result_for(index_check, root).returncode, 0)
+                write_index(root, initial_index)
+
+                write_index(root, committed)
                 run(["git", "commit", "-qm", "Format assigned amount"], root)
+                write_index(root, indexed)
+                (root / "app.py").write_text(working)
                 result = result_for(check, root)
-                self.assertEqual(result.returncode == 0, not include_foreign_fragment, result.stderr)
+                self.assertEqual(result.returncode == 0, variant == "preserved", result.stderr)
 
 
 class CaseValidationTest(unittest.TestCase):
