@@ -1,9 +1,13 @@
 import sqlite3
 
 
-def connect():
-    connection = sqlite3.connect(":memory:")
-    connection.executescript("CREATE TABLE orders(id TEXT PRIMARY KEY); CREATE TABLE tasks(id TEXT PRIMARY KEY, done INTEGER DEFAULT 0);")
+def connect(database_path="outbox.sqlite3"):
+    connection = sqlite3.connect(database_path)
+    connection.executescript(
+        "CREATE TABLE IF NOT EXISTS orders(id TEXT PRIMARY KEY);"
+        "CREATE TABLE IF NOT EXISTS tasks("
+        "id TEXT PRIMARY KEY, done INTEGER DEFAULT 0);"
+    )
     return connection
 
 

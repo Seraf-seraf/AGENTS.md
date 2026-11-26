@@ -18,7 +18,7 @@
       "argv": [
         "python3",
         "-c",
-        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': 'edb75688944f8d74f0fc830a2be84682695f9f4e6c37493084e22f0bb360918a', 'outbox.py': '1f78ce91bef0c01279b6c271de7c346231fb15c359208878458ed3a63e282d02', 'proposal.md': 'aef26e8c08d99611597731a135d3a50b4733b89d6dadf1f3281ffdd8826946ee', 'test_outbox.py': '247351363859ba8d4f2b057369e85ce329df94132c88ee3b6c37dccbd9134d41', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
+        "import hashlib\nfrom pathlib import Path\nexpected = {'README.md': '8f7ec9d1b80727e5014a3a6182853606d7bbe286764422d6589583940a8cfd10', 'outbox.py': 'fe1354bdba15919ff236d809d1d0b0f8eae87a75db6fb741d36b7bb4e2b2ab1b', 'proposal.md': 'aef26e8c08d99611597731a135d3a50b4733b89d6dadf1f3281ffdd8826946ee', 'test_outbox.py': '44622c443ded97235853b9c93f967160e3dde57b0a43412a3f061ebf86d94138', '.gitignore': 'f81d214340c9461a230c82de9ce1f450d737133dabc1fb33ca17454919188057'}\nfor name, digest in expected.items():\n    path = Path(name)\n    assert path.is_file(), f\"Missing original file: {name}\"\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name\n"
       ],
       "cwd": ".",
       "timeout_seconds": 10,
